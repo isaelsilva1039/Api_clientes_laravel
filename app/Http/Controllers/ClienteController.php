@@ -58,10 +58,7 @@ class ClienteController extends Controller
                         "mensagem"   =>$mensagem
                     ]
                  );
-        
         }
-     
-
     }
 
 
@@ -106,19 +103,17 @@ class ClienteController extends Controller
                     "code"      => 400,
                 ]
             );
-        }
-        
-        
+        }    
     }
 
     
-
-
     public function destroy($id)
     {
         try {
             
-            $this->show($id)->delete();
+            $cliente = Cliente::find($id);
+            $cliente->delete();
+        
             return Response(["mensagem" => "Cliente deletado com sucesso", "code "=> 200]);
 
         } catch (\Throwable $th) {

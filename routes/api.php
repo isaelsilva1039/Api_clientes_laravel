@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\Login\LoginController;
+use App\Http\Controllers\Login\RegisterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +21,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/clientes',         [ClienteController::class, 'index']); // route principal
-Route::post('/clientes',        [ClienteController::class, 'store']); // route de cadastros para o banco de dados 
-Route::get('/clientes/{id}',    [ClienteController::class, 'show']); // trazer informação do banco de dados
-Route::put('/clientes/{id}',    [ClienteController::class, 'update']); //atualiza
-Route::delete('/clientes/{id}', [ClienteController::class, 'destroy']);
+Route::get('/clientes',         [ClienteController::class, 'index'])->middleware('auth:sanctum');  // route principal
+Route::post('/clientes',        [ClienteController::class, 'store'])->middleware('auth:sanctum');  // route de cadastros para o banco de dados 
+Route::get('/clientes/{id}',    [ClienteController::class, 'show'])->middleware('auth:sanctum');   // trazer informação do banco de dados
+Route::put('/clientes/{id}',    [ClienteController::class, 'update'])->middleware('auth:sanctum'); //atualiza
+Route::delete('/clientes/{id}', [ClienteController::class, 'destroy'])->middleware('auth:sanctum');
 
 
+
+Route::prefix('auth')->group(function(){
+    Route::post('/login',[LoginController::class, 'login']);
+    Route::post('/logout',[LoginController::class, 'logout']);
+    Route::post('/register',[RegisterController::class, 'register']);
+
+});
