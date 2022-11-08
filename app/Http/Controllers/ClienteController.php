@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Service\Attribute\Required;
 
+
+
+//  esse controller era apenas um teste ( não serve pra nada )
 class ClienteController extends Controller
 {
   
