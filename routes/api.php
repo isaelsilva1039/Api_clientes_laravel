@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Login\RegisterController;
 use App\Http\Controllers\Ocorencia\VeiculoController;
@@ -18,13 +19,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+// -------------------------- USER -----------------------------------------------------------
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-// rotas testes para clientes
+// -------------------------- CLIENTES ISAEL-----------------------------------------------------------
 Route::get('/clientes',         [ClienteController::class, 'index'])->middleware('auth:sanctum');  // route principal
 Route::post('/clientes',        [ClienteController::class, 'store'])->middleware('auth:sanctum');  // route de cadastros para o banco de dados 
 Route::get('/clientes/{id}',    [ClienteController::class, 'show'])->middleware('auth:sanctum');   // trazer informação do banco de dados
@@ -32,16 +32,20 @@ Route::put('/clientes/{id}',    [ClienteController::class, 'update'])->middlewar
 Route::delete('/clientes/{id}', [ClienteController::class, 'destroy'])->middleware('auth:sanctum');
 
 
-// rotas sistema Camereas
+// -------------------------- CAMERAS ISMAEL  -----------------------------------------------------------
 Route::get('/veiculos',         [VeiculoController::class, 'indexAction'])->middleware('auth:sanctum');  // pegar todos os veiculos cadastrado
 Route::post('/veiculos',         [VeiculoController::class, 'indexStore'])->middleware('auth:sanctum');  // cria um novo resgistro
 
 
 
-
+// -------------------------- LOGIN , CADASTRO USUARIO NOVO  -----------------------------------------------------------
 Route::prefix('auth')->group(function(){
     Route::post('/login',[LoginController::class, 'login']);
     Route::post('/logout',[LoginController::class, 'logout']);
     Route::post('/register',[RegisterController::class, 'register']);
+});
 
+// -------------------------- CADASTRO DO CLIENTE AMARADO COM O USUARIO -----------------------------------------------------------
+Route::prefix('cliente')->group(function(){
+    Route::post('/cadastrar',[CadastroController::class, 'create'])->middleware('auth:sanctum');;
 });

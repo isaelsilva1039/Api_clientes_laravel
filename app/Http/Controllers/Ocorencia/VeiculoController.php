@@ -18,63 +18,17 @@ class VeiculoController extends Controller
         $this->managerVeiculos =  $managerVeiculo;
     }
 
-    // pegar todas os veiculos cadastrado
+
     public function indexAction()
     {
         return Veiculo::all();
     }
 
-
-    /**
-     * controler para criar um novo Veiculo.
-     */
+    
     public function indexStore(Request $request)
     {
-      
       $managerVeiculo = $this->managerVeiculos->novoVeiculo($request);
-
       return new JsonResponse($managerVeiculo);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

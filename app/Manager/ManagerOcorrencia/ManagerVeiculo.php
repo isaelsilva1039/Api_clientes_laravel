@@ -10,8 +10,8 @@ use PhpParser\Node\Stmt\TryCatch;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ManagerVeiculo extends Controller{
-    
-    // serviço inserir  
+
+    // micros serviços para usar em qual quer controler   
     public function novoVeiculo($request){
         $status_code = 200;
        
