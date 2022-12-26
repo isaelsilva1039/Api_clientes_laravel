@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Login;
 
 use App\Http\Controllers\Controller;
+use App\Manager\LoginManager\ApiLoginManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,32 +11,17 @@ use Symfony\Component\HttpFoundation\Response;
 class LoginController extends Controller
 {
     
+    private $apiLoginManager;
+
+    public function __construct(ApiLoginManager $apiLoginManager)
+    {
+        $this->apiLoginManager =  $apiLoginManager;
+    }
 
 
     public function login(Request $request)
     {
-        $status_code = 500;
-
-        $credemciais = $request->only('cpf', 'password');
-        // Caso o usuario não exista
-        if(!auth()->attempt($credemciais)) {
-            return Response ([
-                'result' => [
-                    'status_code' => $status_code
-                ]
-            ]);
-        }
-        
-        
-        $token = $request->user()->createToken("auth_token");
-
-  
-
-        return Response ([
-            'result' => [
-                'token' => $token->plainTextToken,
-                'status_code' => $status_code = 200
-            ]
-        ]);
+       $token = $this->apiLoginManager->loginUsuario($request);  
+       return $token;      
     }
 }
