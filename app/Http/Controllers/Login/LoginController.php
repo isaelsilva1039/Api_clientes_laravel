@@ -14,17 +14,27 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        $status_code = 500;
+
         $credemciais = $request->only('cpf', 'password');
-        
-        if(!auth()->attempt($credemciais)) 
-            abort(401, 'Invalido credenciais');
+        // Caso o usuario não exista
+        if(!auth()->attempt($credemciais)) {
+            return Response ([
+                'result' => [
+                    'status_code' => $status_code
+                ]
+            ]);
+        }
         
         
         $token = $request->user()->createToken("auth_token");
 
+  
+
         return Response ([
             'result' => [
-                'token' => $token->plainTextToken
+                'token' => $token->plainTextToken,
+                'status_code' => $status_code = 200
             ]
         ]);
     }
