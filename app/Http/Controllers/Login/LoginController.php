@@ -13,7 +13,10 @@ class LoginController extends Controller
     
     private $apiLoginManager;
 
-    public function __construct(ApiLoginManager $apiLoginManager)
+    public function __construct(
+        // dentro do construct coloque as class que inicia como serviços
+        ApiLoginManager $apiLoginManager
+        )
     {
         $this->apiLoginManager =  $apiLoginManager;
     }
