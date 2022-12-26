@@ -14,7 +14,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $credemciais = $request->only('email', 'password');
+        $credemciais = $request->only('cpf', 'password');
         
         if(!auth()->attempt($credemciais)) 
             abort(401, 'Invalido credenciais');
@@ -23,7 +23,7 @@ class LoginController extends Controller
         $token = $request->user()->createToken("auth_token");
 
         return Response ([
-            'data' => [
+            'result' => [
                 'token' => $token->plainTextToken
             ]
         ]);
