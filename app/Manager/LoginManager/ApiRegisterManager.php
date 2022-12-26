@@ -14,14 +14,14 @@ class ApiRegisterManager extends Controller{
 
     // micros serviços para usar em qual quer controler   
     public function registrarUsuario(Request $request, User $user){
-        $userData = $request->only('name', 'email', 'password');
+        $userData = $request->only('name', 'cpf', 'password');
         $userData['password'] = bcrypt($userData['password']);
 
         if(!$user = $user->create($userData))
             abort(500, 'Erro ao criar Usuario');
 
         return  [
-            'data' => [
+            'result' => [
                 'user' => $user,
             ]
         ];
