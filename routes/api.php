@@ -33,7 +33,7 @@ Route::delete('/clientes/{id}', [ClienteController::class, 'destroy'])->middlewa
 
 
 // -------------------------- CAMERAS ISMAEL  -----------------------------------------------------------
-Route::get('/veiculos',         [VeiculoController::class, 'indexAction'])->middleware('auth:sanctum');  // pegar todos os veiculos cadastrado
+Route::get('/veiculos',         [VeiculoController::class, 'indexAction']);  // pegar todos os veiculos cadastrado
 Route::post('/veiculos',         [VeiculoController::class, 'indexStore'])->middleware('auth:sanctum');  // cria um novo resgistro
 
 
