@@ -14,7 +14,7 @@ class ApiLoginManager extends Controller{
 
     // micros serviços para usar em qual quer controler   
     public function loginUsuario(Request $request){
-        $status_code = 500;
+        $status_code = 400;
 
 
         try {
