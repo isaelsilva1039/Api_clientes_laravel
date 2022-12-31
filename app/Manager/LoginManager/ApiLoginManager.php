@@ -35,7 +35,7 @@ class ApiLoginManager extends Controller{
             
             return Response ([
                     'token' => $token->plainTextToken,
-                    'usuario' => auth()->user(),
+                    'user' => auth()->user(),
                     'status_code' => $status_code = 200
                 ]);
         
