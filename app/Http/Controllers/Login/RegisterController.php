@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Login;
 use App\Http\Controllers\Controller;
 use App\Manager\LoginManager\ApiRegisterManager;
 use App\Models\User;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -36,6 +37,16 @@ class RegisterController extends Controller
 
         return new JsonResponse($data, $statusCode );
         
+    }
+
+
+    public function editar(Request $request){
+        return new JsonResponse ($this->apiregistrarUsuario->editarUsuario($request));
+    }
+
+
+    public function usuario(Request $request){
+        return new JsonResponse($this->apiregistrarUsuario->pegarUsuarioPeloToken($request));
     }
     
 }

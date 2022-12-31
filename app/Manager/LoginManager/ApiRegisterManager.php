@@ -4,6 +4,7 @@ namespace App\Manager\LoginManager;
 use App\Http\Controllers\Controller;
 use App\Models\Ocorencia\Veiculo;
 use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -25,6 +26,36 @@ class ApiRegisterManager extends Controller{
                 'user' => $user,
             ]
         ];
+    }
+
+    // pega usuario pelo id do usuario
+    public function usuarioLogado($id){
+        return User::findOrfail($id);
+    }
+
+    // pegaUsuarioPeloToken
+    public function pegarUsuarioPeloToken(Request $request){
+        return auth()->user();
+    }
+
+
+    // edita usuario
+    public function editarUsuario(Request $request){
+      
+        $id = auth()->user()->id;
+        
+        $usuario = $this->usuarioLogado($id);
+        
+        $requestJson = $request->all();
+        
+        $updateUsuario = $usuario->update($requestJson);
+        
+        return (
+            [
+                "Clinente " => $usuario,
+                "mensagem " => "Cliente Atualizado com sucesso",
+                "code"      => 200,
+            ]);
     }
 }
 ?>

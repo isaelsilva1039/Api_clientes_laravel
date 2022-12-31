@@ -28,7 +28,7 @@ Route::delete('/clientes/{id}', [ClienteController::class, 'destroy'])->middlewa
 
 
 // -------------------------- CAMERAS ISMAEL  -----------------------------------------------------------
-Route::get('/veiculos',         [VeiculoController::class, 'indexAction']);  // pegar todos os veiculos cadastrado
+Route::get('/veiculos',         [VeiculoController::class, 'indexAction'])->middleware('auth:sanctum');  // pegar todos os veiculos cadastrado
 Route::post('/veiculos',         [VeiculoController::class, 'indexStore'])->middleware('auth:sanctum');  // cria um novo resgistro
 
 
@@ -38,6 +38,9 @@ Route::prefix('auth')->group(function(){
     Route::post('/login',[LoginController::class, 'login']);
     Route::post('/logout',[LoginController::class, 'logout']);
     Route::post('/register',[RegisterController::class, 'register']);
+    Route::put('/editar',[RegisterController::class, 'editar'])->middleware('auth:sanctum');//edita usuario Logado
+    Route::get('/usuario',[RegisterController::class, 'usuario'])->middleware('auth:sanctum');//dados usuario logado
+    
 });
 
 // -------------------------- CADASTRO DO CLIENTE AMARADO COM O USUARIO -----------------------------------------------------------

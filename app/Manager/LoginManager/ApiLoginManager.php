@@ -19,7 +19,7 @@ class ApiLoginManager extends Controller{
 
         try {
             
-            $credemciais = $request->only('cpf', 'password');
+            $credemciais = $request->only('email', 'password');
             
             // Caso o usuario não exista
             if(!auth()->attempt($credemciais)) {
@@ -45,6 +45,7 @@ class ApiLoginManager extends Controller{
         }
 
     }
+
        
 }
 ?>
