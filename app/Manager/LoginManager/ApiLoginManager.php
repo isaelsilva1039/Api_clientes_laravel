@@ -4,6 +4,7 @@ namespace App\Manager\LoginManager;
 use App\Http\Controllers\Controller;
 use App\Models\Ocorencia\Veiculo;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -23,9 +24,10 @@ class ApiLoginManager extends Controller{
 
             // Caso o usuario não exista
             if(!auth()->attempt($credemciais)) {
-                return $data = [
+                 $data = [
                     'mensagem' => 'E-mail e/ou senha incorreta',
-                    'status' =>  'error'
+                    'status' =>  'error',
+                    'status_code' => $status_code = 200
                 ];
             }
                     
@@ -39,10 +41,8 @@ class ApiLoginManager extends Controller{
                 ];
         
         } catch (\Throwable $th) {
-            $data = [
-                'mensagem' => 'E-mail e/ou senha incorreta',
-                'status' =>  'error'
-            ];
+           throw new Exception("Error Processing Request", 2);
+           
         }
 
         return $data;
