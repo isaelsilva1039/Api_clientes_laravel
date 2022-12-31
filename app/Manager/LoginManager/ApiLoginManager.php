@@ -23,9 +23,9 @@ class ApiLoginManager extends Controller{
 
             // Caso o usuario não exista
             if(!auth()->attempt($credemciais)) {
-                return $data =[
+                return $data = [
                     'mensagem' => 'E-mail e/ou senha incorreta',
-                    'status_code' => $status_code = 400,
+                    'status' =>  'error'
                 ];
             }
                     
@@ -41,7 +41,7 @@ class ApiLoginManager extends Controller{
         } catch (\Throwable $th) {
             $data = [
                 'mensagem' => 'E-mail e/ou senha incorreta',
-                'status_code' => $status_code = 400
+                'status' =>  'error'
             ];
         }
 
