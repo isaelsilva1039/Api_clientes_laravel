@@ -19,32 +19,18 @@ class RegisterController extends Controller
         $this->apiregistrarUsuario = $apiRegisterManager;
     }
 
-
+    //registar novo usuario
     public function register(Request $request, User $user)
     {
-        $data = null;
-        $statusCode = 200;
-
-        try {
-         
-            $data =   $this->apiregistrarUsuario->registrarUsuario($request, $user);
-          
-        } catch (\Error $th) {
-            // throw $th->getMessage('Erro Ao regitrar Usuario');
-            $statusCode = 400;
-            $data = 'Não registrado';
-        }
-
-        return new JsonResponse($data, $statusCode );
-        
+        return new JsonResponse($this->apiregistrarUsuario->registrarUsuario($request, $user) );   
     }
 
-
+    // editar usuario logado 
     public function editar(Request $request){
         return new JsonResponse ($this->apiregistrarUsuario->editarUsuario($request));
     }
 
-
+    // usuario logado
     public function usuario(Request $request){
         return new JsonResponse($this->apiregistrarUsuario->pegarUsuarioPeloToken($request));
     }

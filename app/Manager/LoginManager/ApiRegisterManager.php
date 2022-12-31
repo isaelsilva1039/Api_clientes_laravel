@@ -13,19 +13,34 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ApiRegisterManager extends Controller{
 
+
     // micros serviços para usar em qual quer controler   
     public function registrarUsuario(Request $request, User $user){
-        $userData = $request->only('name', 'email', 'password');
-        $userData['password'] = bcrypt($userData['password']);
+        
+        try {
+            $status_code = 200;
+            $userData = $request->only('name', 'email', 'password');
+            $userData['password'] = bcrypt($userData['password']);
 
-        if(!$user = $user->create($userData))
-            abort(500, 'Erro ao criar Usuario');
+            if(!$user = $user->create($userData))
+                abort(500, 'Erro ao criar Usuario');
 
-        return  [
-            'result' => [
-                'user' => $user,
-            ]
-        ];
+            $data = [
+                'result' => [
+                    'user' => $user,
+                    'status_code' => $status_code
+                ]
+            ];
+
+        } catch (\Throwable $th) {
+            $data = [
+                'mensagem' => 'erro ao registrar novo usuario',
+                'status_code' => $status_code = 400
+            ];
+        }
+
+        return $data;
+        
     }
 
     // pega usuario pelo id do usuario
@@ -35,27 +50,58 @@ class ApiRegisterManager extends Controller{
 
     // pegaUsuarioPeloToken
     public function pegarUsuarioPeloToken(Request $request){
-        return auth()->user();
+        try {
+            $status_code = 200;
+
+            $data = [
+                'user' => auth()->user(),
+                'status_code' => $status_code
+            ];
+        } catch (\Throwable $th) {
+            $data = [
+                'mensagem' => 'erro ao recuperar dados do usuario',
+                'status_code' => $status_code
+            ];
+        }
+
+        return $data;
     }
 
 
     // edita usuario
     public function editarUsuario(Request $request){
       
+       try {
+        $status_code = 200;
         $id = auth()->user()->id;
         
         $usuario = $this->usuarioLogado($id);
         
         $requestJson = $request->all();
+
+        if($requestJson == null){
+            return $data = [
+                'mensagem' => 'você precisa mandar pelo menos uma informação para essa api',
+                'status_code' => 400
+            ];
+        }
         
         $updateUsuario = $usuario->update($requestJson);
         
-        return (
+        $data = 
             [
-                "Clinente " => $usuario,
+                "user " => $usuario,
                 "mensagem " => "Cliente Atualizado com sucesso",
-                "code"      => 200,
-            ]);
+                "status_code"      => $status_code,
+            ];
+       } catch (\Throwable $th) {
+
+        $data = [
+            'mensagem' => 'erro ao editar usuario',
+            'status_code' => $status_code
+        ];
+       }
+       return $data;
     }
 }
 ?>
