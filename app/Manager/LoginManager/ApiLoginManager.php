@@ -34,12 +34,10 @@ class ApiLoginManager extends Controller{
             $token = $request->user()->createToken("auth_token");
             
             return Response ([
-                'result' => [
                     'token' => $token->plainTextToken,
                     'usuario' => auth()->user(),
                     'status_code' => $status_code = 200
-                ]
-            ]);
+                ]);
         
         } catch (\Throwable $th) {
             throw $th;
