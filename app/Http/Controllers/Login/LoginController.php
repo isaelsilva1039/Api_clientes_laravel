@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Manager\LoginManager\ApiLoginManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
@@ -25,6 +26,6 @@ class LoginController extends Controller
     public function login(Request $request)
     {
        $token = $this->apiLoginManager->loginUsuario($request);  
-       return $token;      
+       return new JsonResponse($token);      
     }
 }

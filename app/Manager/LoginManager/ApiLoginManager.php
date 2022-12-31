@@ -14,34 +14,38 @@ class ApiLoginManager extends Controller{
 
     // micros serviços para usar em qual quer controler   
     public function loginUsuario(Request $request){
-        $status_code = 400;
+       
 
 
         try {
-            
+            $status_code = 200;
             $credemciais = $request->only('email', 'password');
-            
+
             // Caso o usuario não exista
             if(!auth()->attempt($credemciais)) {
-                return Response ([
-                    'result' => [
-                        'status_code' => $status_code
-                    ]
-                ]);
+                return $data =[
+                    'mensagem' => 'E-mail e/ou senha incorreta',
+                    'status_code' => $status_code = 400,
+                ];
             }
                     
             
             $token = $request->user()->createToken("auth_token");
             
-            return Response ([
+             $data = [
                     'token' => $token->plainTextToken,
                     'user' => auth()->user(),
                     'status_code' => $status_code = 200
-                ]);
+                ];
         
         } catch (\Throwable $th) {
-            throw $th;
+            $data = [
+                'mensagem' => 'E-mail e/ou senha incorreta',
+                'status_code' => $status_code = 400
+            ];
         }
+
+        return $data;
 
     }
 
