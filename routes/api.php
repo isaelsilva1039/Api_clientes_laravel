@@ -46,17 +46,17 @@ Route::prefix('auth')->group(function(){
 
 // -------------------------- CADASTRO DO CLIENTE AMARADO COM O USUARIO -----------------------------------------------------------
 Route::prefix('cliente')->group(function(){
-    Route::post('/cadastrar',[CadastroController::class, 'create'])->middleware('auth:sanctum');;
+    Route::post('/cadastrar',[CadastroController::class, 'create'])->middleware('auth:sanctum');
 });
 
 
 
 // -------------------------- CADASTRO DO CLIENTE AMARADO COM O USUARIO -----------------------------------------------------------
 Route::prefix('cliente')->group(function(){
-    Route::get('/escala',[ApiControllerEscala::class, 'escalaAction']);
-    Route::get('/escala/{id}',[ApiControllerEscala::class, 'obetemEscalarPorId']);
-    Route::put('/escala/{id}',[ApiControllerEscala::class, 'editarMedico']);
-    Route::delete('/escala',[ApiControllerEscala::class, 'excluirEscala']);
+    Route::get('/escala',[ApiControllerEscala::class, 'escalaAction'])->middleware('auth:sanctum');
+    Route::get('/escala/{id}',[ApiControllerEscala::class, 'obetemEscalarPorId'])->middleware('auth:sanctum');
+    Route::put('/escala/{id}',[ApiControllerEscala::class, 'editarMedico'])->middleware('auth:sanctum');
+    Route::delete('/escala',[ApiControllerEscala::class, 'excluirEscala'])->middleware('auth:sanctum');
 
 });
 
