@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
@@ -47,3 +48,17 @@ Route::prefix('auth')->group(function(){
 Route::prefix('cliente')->group(function(){
     Route::post('/cadastrar',[CadastroController::class, 'create'])->middleware('auth:sanctum');;
 });
+
+
+
+// -------------------------- CADASTRO DO CLIENTE AMARADO COM O USUARIO -----------------------------------------------------------
+Route::prefix('cliente')->group(function(){
+    Route::get('/escala',[ApiControllerEscala::class, 'escalaAction']);
+    Route::get('/escala/{id}',[ApiControllerEscala::class, 'obetemEscalarPorId']);
+    Route::put('/escala/{id}',[ApiControllerEscala::class, 'editarMedico']);
+    Route::delete('/escala',[ApiControllerEscala::class, 'excluirEscala']);
+
+});
+
+
+
