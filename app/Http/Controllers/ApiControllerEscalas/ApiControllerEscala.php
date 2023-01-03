@@ -44,6 +44,11 @@ class ApiControllerEscala extends Controller
          return new JsonResponse($this->apiEscalaManager->excluirEscalaPorId( $request));   
      }
 
+     public function criarEscala(Request $request)
+     {
+         return new JsonResponse($this->apiEscalaManager->criarNovaEscala( $request));   
+     }
+
 
     
 }

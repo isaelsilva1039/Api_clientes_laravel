@@ -16,7 +16,7 @@ class Escala extends Model
      */
     protected $fillable = [
         'nome',
-        'cmr',
+        'crm',
         'dataTimeInicio',
         'dataTimeFim',
     ];

@@ -75,5 +75,25 @@ class ApiEscalaManager extends Controller{
         
         return $respon;
     }
+
+
+
+      // pegar apenas uma escala de um medico  
+      public function criarNovaEscala($request){
+        $status_code = 200;
+       
+        try {
+            $novaEscala = $request->all();
+
+            $escala = Escala::create($novaEscala);
+
+            $respon = ['escala' => $escala ,"status_code" => $status_code =200];
+        
+        } catch (\Throwable $e) {
+            $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
+        }
+        
+        return $respon;
+    }
 }
 ?>
