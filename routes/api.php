@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\Groups\ApiGroupsController;
 use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Login\RegisterController;
@@ -57,8 +58,17 @@ Route::prefix('cliente')->group(function(){
     Route::get('/escala/{id}',[ApiControllerEscala::class, 'obetemEscalarPorId'])->middleware('auth:sanctum');
     Route::put('/escala/{id}',[ApiControllerEscala::class, 'editarMedico'])->middleware('auth:sanctum');
     Route::delete('/escala',[ApiControllerEscala::class, 'excluirEscala'])->middleware('auth:sanctum');
-    Route::post('/escala',[ApiControllerEscala::class, 'criarEscala'])->middleware('auth:sanctum');;
+    Route::post('/escala',[ApiControllerEscala::class, 'criarEscala'])->middleware('auth:sanctum');
 
+});
+
+
+Route::prefix('cliente')->group(function(){
+    Route::get('/groups',[ApiGroupsController::class, 'groupsIndex'])->middleware('auth:sanctum');
+    Route::get('/groups/{id}',[ApiGroupsController::class, 'obtemGroupPorId'])->middleware('auth:sanctum');
+    Route::put('/groups/{id}',[ApiGroupsController::class, 'editarGroupPorId'])->middleware('auth:sanctum');
+    Route::post('/groups',[ApiGroupsController::class, 'novoGroup'])->middleware('auth:sanctum');
+    Route::delete('/groups/{id}',[ApiGroupsController::class, 'deleteGroup'])->middleware('auth:sanctum');
 });
 
 
