@@ -13,7 +13,7 @@ class ApiMembrosManager extends Controller{
         $status_code = 200;
        
         try {
-            $membro = Membro::all();
+            $membro = Membro::with('igreja')->get();
             $respon = ['Membros' => $membro ,"status_code" => $status_code ];
         
         } catch (\Throwable $e) {

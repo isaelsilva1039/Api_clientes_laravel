@@ -2,6 +2,7 @@
 
 namespace App\Models\CadastroMembros;
 
+use App\Models\Igreja\Igreja;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,4 +30,10 @@ class Membro extends Model
         'data_batismo_espirito_santo',
         'sexo'
     ];
+
+
+    public function igreja()
+    {
+        return $this->belongsTo(Igreja::class, 'fk_igreja');
+    }
 }
