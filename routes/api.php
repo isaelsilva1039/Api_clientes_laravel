@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
+use App\Http\Controllers\ApiMembros\ApiControllerMembros;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Groups\ApiGroupsController;
 use App\Http\Controllers\Login\CadastroController;
@@ -69,6 +70,13 @@ Route::prefix('cliente')->group(function(){
     Route::put('/groups/{id}',[ApiGroupsController::class, 'editarGroupPorId'])->middleware('auth:sanctum');
     Route::post('/groups',[ApiGroupsController::class, 'novoGroup'])->middleware('auth:sanctum');
     Route::delete('/groups/{id}',[ApiGroupsController::class, 'deleteGroup'])->middleware('auth:sanctum');
+});
+
+
+
+Route::prefix('membros')->group(function(){
+    Route::get('/all',[ApiControllerMembros::class, 'indexMembros'])->middleware('auth:sanctum');
+    Route::post('/create',[ApiControllerMembros::class, 'createMembroNovo'])->middleware('auth:sanctum');
 });
 
 
