@@ -9,6 +9,7 @@ use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Login\RegisterController;
 use App\Http\Controllers\Ocorencia\VeiculoController;
+use App\Http\Controllers\Tipo\TipoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -82,6 +83,7 @@ Route::prefix('membros')->group(function(){
 
 Route::prefix('igrejas')->group(function(){
     Route::get('/all',[IgrejaController::class, 'indexAllIgrejas'])->middleware('auth:sanctum');
+    Route::get('/tipos',[TipoController::class, 'indexAllTipos'])->middleware('auth:sanctum');
 });
 
 

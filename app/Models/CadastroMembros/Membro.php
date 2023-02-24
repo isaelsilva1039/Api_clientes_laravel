@@ -3,6 +3,7 @@
 namespace App\Models\CadastroMembros;
 
 use App\Models\Igreja\Igreja;
+use App\Models\Tipo\Tipo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,5 +36,10 @@ class Membro extends Model
     public function igreja()
     {
         return $this->belongsTo(Igreja::class, 'fk_igreja');
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'cargo');
     }
 }

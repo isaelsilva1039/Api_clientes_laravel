@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Igreja;
+namespace App\Models\Tipo;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Igreja extends Model
+class Tipo extends Model
 {
     use HasFactory;
 
@@ -14,19 +14,14 @@ class Igreja extends Model
      *
      * @var array<int, string>
      */
-    protected $table = 'igrejas';
+    protected $table = 'tipo';
     protected $fillable = [
-          'dirigente',
-          'nome_igreja',
-          'cidade',
-          'barrio', 
-          'endereco',
+          'id',
+          'tipo'
     ];
 
     public function membros()
     {
-        return $this->hasMany(Membros::class, 'fk_igreja');
+        return $this->hasMany(Membros::class, 'cargo');
     }
-
-    
 }
