@@ -4,6 +4,7 @@ use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Groups\ApiGroupsController;
+use App\Http\Controllers\Igreja\IgrejaController;
 use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Login\RegisterController;
@@ -78,6 +79,11 @@ Route::prefix('membros')->group(function(){
     Route::get('/all',[ApiControllerMembros::class, 'indexMembros'])->middleware('auth:sanctum');
     Route::post('/create',[ApiControllerMembros::class, 'createMembroNovo'])->middleware('auth:sanctum');
 });
+
+Route::prefix('igrejas')->group(function(){
+    Route::get('/all',[IgrejaController::class, 'indexAllIgrejas'])->middleware('auth:sanctum');
+});
+
 
 
 
