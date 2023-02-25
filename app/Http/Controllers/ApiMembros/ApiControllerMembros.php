@@ -28,6 +28,20 @@ class ApiControllerMembros extends Controller
         return new JsonResponse($this->apiMembrosManager->novoMembros($request));
     }
 
+    public function buscarPorNomeMembro(Request $request)
+    {
+        return new JsonResponse($this->apiMembrosManager->buscarPorNome($request));
+    }
+
+    public function buscarPorId($id)
+    {
+        return new JsonResponse($this->apiMembrosManager->buscarPorId($id));
+    }
+
+    public function editarMembro($id, Request $request)
+    {
+        return new JsonResponse($this->apiMembrosManager->editar($id, $request));
+    }
 
 
     
