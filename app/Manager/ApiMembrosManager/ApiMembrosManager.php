@@ -14,7 +14,7 @@ class ApiMembrosManager extends Controller{
     public function membros($request){
         $status_code = 200;
         try {
-            $membro = Membro::with('igreja', 'tipo')->paginate(5);
+            $membro = Membro::with('igreja', 'tipo')->paginate(10);
             $respon = ['Membros' => $membro ,
             "status_code" => $status_code 
         ];
