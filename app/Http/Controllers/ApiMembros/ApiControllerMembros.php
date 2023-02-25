@@ -43,6 +43,10 @@ class ApiControllerMembros extends Controller
         return new JsonResponse($this->apiMembrosManager->editar($id, $request));
     }
 
+    public function deletarMembro($id)
+    {
+        return new JsonResponse($this->apiMembrosManager->delete($id));
+    }
 
     
 }

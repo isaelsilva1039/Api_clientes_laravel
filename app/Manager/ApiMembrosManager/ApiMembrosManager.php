@@ -103,4 +103,18 @@ class ApiMembrosManager extends Controller{
         return $respon;
     }
 
+
+    public function delete($id){
+
+          try{
+            $membroAserExcluido = $this->buscarPorId($id);
+            $membro = Membro::destroy($id);
+            $respon = ['Excluido' => $membroAserExcluido ,"status_code" => $status_code =200];
+          }catch(\Throwable $e){
+            $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
+          }
+
+        return $respon;
+    }
+
 }

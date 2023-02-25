@@ -82,6 +82,7 @@ Route::prefix('membros')->group(function(){
     Route::get('/find',[ApiControllerMembros::class, 'buscarPorNomeMembro'])->middleware('auth:sanctum');
     Route::get('/find/{id}',[ApiControllerMembros::class, 'buscarPorId'])->middleware('auth:sanctum');
     Route::put('/find/{id}',[ApiControllerMembros::class, 'editarMembro'])->middleware('auth:sanctum');
+    Route::delete('/find/{id}',[ApiControllerMembros::class, 'deletarMembro'])->middleware('auth:sanctum');
 });
 
 Route::prefix('igrejas')->group(function(){
