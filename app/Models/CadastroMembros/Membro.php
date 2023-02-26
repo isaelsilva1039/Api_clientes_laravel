@@ -29,7 +29,8 @@ class Membro extends Model
         'situacao',
         'fk_igreja',
         'data_batismo_espirito_santo',
-        'sexo'
+        'sexo',
+        'image'
     ];
 
 

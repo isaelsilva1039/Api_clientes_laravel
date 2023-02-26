@@ -12,6 +12,8 @@ class ApiMembrosManager extends Controller{
 
     // pegar todas as esclas   
     public function membros($request){
+
+      
         $status_code = 200;
         try {
             $membro = Membro::with('igreja', 'tipo')->paginate(10);
@@ -30,6 +32,7 @@ class ApiMembrosManager extends Controller{
 
     // pegar todas as esclas   
     public function novoMembros($request){
+        
         $status_code = 200;
        
         try {
