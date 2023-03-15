@@ -2,11 +2,15 @@
 namespace App\Manager\ApiMembrosManager;
 
 use App\Http\Controllers\Controller;
+use App\Models\CadastroMembros\Anexo;
 use App\Models\CadastroMembros\Membro;
 use App\Models\CadastrosCliente\Cadastro;
 use App\Models\EscalasMedicos\Escala;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Aws\S3\S3Client;
+use Exception;
 
 class ApiMembrosManager extends Controller{
 
@@ -15,31 +19,9 @@ class ApiMembrosManager extends Controller{
 
         $status_code = 200;
         try {
-            $membro = Membro::with('igreja', 'tipo')->get()->sortByDesc('id')->values();
-            $respon = ['Membros' => $membro ,
-            "status_code" => $status_code 
-        ];
-        
-        } catch (\Throwable $e) {
-            $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
-        }
-        
-        return $respon;
-    }
-
-
-
-    // pegar todas as esclas   
-    public function novoMembros($request){
-        
-        $status_code = 200;
-       
-        try {
-            $membro = $request->all();
-            $membro = Membro::create($membro);
-            $respon = [
-                'Membro' => $membro ,
-                "status_code" => $status_code
+            $membro = Membro::with('igreja', 'tipo','anexo')->get()->sortByDesc('id')->values();
+                $respon = ['Membros' => $membro ,
+                "status_code" => $status_code 
             ];
         
         } catch (\Throwable $e) {
@@ -48,6 +30,73 @@ class ApiMembrosManager extends Controller{
         
         return $respon;
     }
+
+
+
+   // pegar todas as esclas   
+public function novoMembros(Request $request){
+        
+    $status_code = 200;
+       
+    try {
+        $membro = $request->except('file');
+        $anexo = $request->file('file');
+
+        $path = $anexo->store('anexos');
+        $url  = Storage::url($path);
+
+        $anexo = Anexo::create(
+            ['path' => $path,
+             'name' => $anexo->getClientOriginalName(),
+             'url' => $url
+
+        ]);
+
+        $membro['fk_anexo'] = $anexo->id;
+
+        $membro = Membro::create($membro);
+
+        $respon = [
+            'Membro' => $membro,
+            'Anexo' => $anexo,
+            'status_code' => $status_code
+        ];
+        
+    } catch (\Throwable $e) {
+        $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
+    }
+        
+        return $respon;
+    }
+    
+    public function exibirAnexo($id)
+    {
+
+        try {
+
+            $anexo = Anexo::findOrFail($id);   
+
+            header('Content-Type: image/png');
+    
+            $url = storage_path('../storage/app/' . $anexo->path);
+            
+            file_exists($url) ? null : throw new Exception('Arquivo não encontrado no caminho: ' . $url);
+
+            header('Content-Disposition: attachment; filename=' . $anexo->name);
+
+            return readfile($url);
+
+        } catch (\Throwable $e) {
+            return  $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
+            
+        }
+
+        
+
+    }
+    
+    
+
 
 
     public function buscarPorNome(Request $request){
@@ -108,7 +157,7 @@ class ApiMembrosManager extends Controller{
 
     public function delete($id){
 
-          try{
+        try{
             $membroAserExcluido = $this->buscarPorId($id);
             $membro = Membro::destroy($id);
             $respon = ['Excluido' => $membroAserExcluido ,"status_code" => $status_code =200];

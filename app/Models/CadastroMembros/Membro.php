@@ -30,7 +30,7 @@ class Membro extends Model
         'fk_igreja',
         'data_batismo_espirito_santo',
         'sexo',
-        'image'
+        'fk_anexo'
     ];
 
 
@@ -43,4 +43,31 @@ class Membro extends Model
     {
         return $this->belongsTo(Tipo::class, 'cargo');
     }
+
+    public function anexo()
+    {
+        return $this->belongsTo(Anexo::class, 'fk_anexo');
+    }
+
+   /**
+     * Get the member's name.
+     *
+     * @return string
+     */
+    public function getNomeMembroAttribute()
+    {
+        return $this->attributes['nome_membro'];
+    }
+
+    /**
+     * Set the member's name.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setNomeMembroAttribute($value)
+    {
+        $this->attributes['nome_membro'] = $value;
+    }
+
 }

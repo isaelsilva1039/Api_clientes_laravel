@@ -22,6 +22,10 @@ class ApiControllerMembros extends Controller
     public function indexMembros(Request $request){
         return new JsonResponse($this->apiMembrosManager->membros($request));
     }
+    
+    public function exibirAnexoAction($id){
+        return new JsonResponse($this->apiMembrosManager->exibirAnexo($id));
+    }
 
 
     public function createMembroNovo(Request $request){

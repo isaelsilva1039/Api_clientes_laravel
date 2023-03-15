@@ -45,7 +45,7 @@ Route::prefix('auth')->group(function(){
     Route::post('/register',[RegisterController::class, 'register']);
     Route::put('/editar',[RegisterController::class, 'editar'])->middleware('auth:sanctum');//edita usuario Logado
     Route::get('/usuario',[RegisterController::class, 'usuario'])->middleware('auth:sanctum');//dados usuario logado
-    
+        
 });
 
 // -------------------------- CADASTRO DO CLIENTE AMARADO COM O USUARIO -----------------------------------------------------------
@@ -83,6 +83,7 @@ Route::prefix('membros')->group(function(){
     Route::get('/find/{id}',[ApiControllerMembros::class, 'buscarPorId'])->middleware('auth:sanctum');
     Route::put('/find/{id}',[ApiControllerMembros::class, 'editarMembro'])->middleware('auth:sanctum');
     Route::delete('/find/{id}',[ApiControllerMembros::class, 'deletarMembro'])->middleware('auth:sanctum');
+    Route::get('/perfil/{id}',[ApiControllerMembros::class, 'exibirAnexoAction']);
 });
 
 Route::prefix('igrejas')->group(function(){
