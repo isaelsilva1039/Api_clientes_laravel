@@ -80,10 +80,11 @@ Route::prefix('membros')->group(function(){
     Route::get('/all',[ApiControllerMembros::class, 'indexMembros'])->middleware('auth:sanctum');
     Route::post('/create',[ApiControllerMembros::class, 'createMembroNovo'])->middleware('auth:sanctum');
     Route::get('/find',[ApiControllerMembros::class, 'buscarPorNomeMembro'])->middleware('auth:sanctum');
-    Route::get('/find/{id}',[ApiControllerMembros::class, 'buscarPorId'])->middleware('auth:sanctum');
+    Route::get('/find/{id}',[ApiControllerMembros::class, 'buscarPorId']);
     Route::put('/find/{id}',[ApiControllerMembros::class, 'editarMembro'])->middleware('auth:sanctum');
     Route::delete('/find/{id}',[ApiControllerMembros::class, 'deletarMembro'])->middleware('auth:sanctum');
     Route::get('/perfil/{id}',[ApiControllerMembros::class, 'exibirAnexoAction']);
+    Route::post('/create/perfil/{id}',[ApiControllerMembros::class, 'salvarAnexoParaUmMembro']);
 });
 
 Route::prefix('igrejas')->group(function(){

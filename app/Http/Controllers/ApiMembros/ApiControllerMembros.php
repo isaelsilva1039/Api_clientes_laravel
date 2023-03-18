@@ -52,5 +52,11 @@ class ApiControllerMembros extends Controller
         return new JsonResponse($this->apiMembrosManager->delete($id));
     }
 
+    public function salvarAnexoParaUmMembro(Request $request,$id)
+    {
+        return new JsonResponse($this->apiMembrosManager->salvarAnexo($request,$id));
+    }
+
+
     
 }

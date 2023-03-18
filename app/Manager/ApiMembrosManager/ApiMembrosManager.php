@@ -68,6 +68,39 @@ public function novoMembros(Request $request){
         
         return $respon;
     }
+
+
+
+    public function salvarAnexo(Request $request,$id){
+        
+        try {
+            $anexo = $request->file('file');
+
+            $path = $anexo->store('anexos');
+        
+            $url  = Storage::url($path);
+
+            $anexo = Anexo::create(
+                ['path' => $path,
+                'name' => $anexo->getClientOriginalName(),
+                'url' => $url
+
+            ]);
+
+            $membroAserEditadoOfkAnexo = $this->buscarPorId($id);
+            $membroAserEditadoOfkAnexo->fk_anexo = $anexo->id;
+            $respon=
+                [
+                    'salvo' => $membroAserEditadoOfkAnexo->save(),
+                    'fk_anexo' => $membroAserEditadoOfkAnexo->fk_anexo
+                ];
+        } catch (\Throwable $e) {
+            $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
+        }
+            
+            return $respon;
+         
+    }
     
     public function exibirAnexo($id)
     {
