@@ -39,26 +39,25 @@ public function novoMembros(Request $request){
     $status_code = 200;
        
     try {
-        $membro = $request->except('file');
-        $anexo = $request->file('file');
+        $membro = $request->all();
+        // $anexo = $request->file('file');
 
-        $path = $anexo->store('anexos');
-        $url  = Storage::url($path);
+        // $path = $anexo->store('anexos');
+        // $url  = Storage::url($path);
 
-        $anexo = Anexo::create(
-            ['path' => $path,
-             'name' => $anexo->getClientOriginalName(),
-             'url' => $url
+        // $anexo = Anexo::create(
+        //     ['path' => $path,
+        //      'name' => $anexo->getClientOriginalName(),
+        //      'url' => $url
 
-        ]);
+        // ]);
 
-        $membro['fk_anexo'] = $anexo->id;
+        // $membro['fk_anexo'] = $anexo->id;
 
         $membro = Membro::create($membro);
 
         $respon = [
             'Membro' => $membro,
-            'Anexo' => $anexo,
             'status_code' => $status_code
         ];
         
@@ -91,7 +90,7 @@ public function novoMembros(Request $request){
             $membroAserEditadoOfkAnexo->fk_anexo = $anexo->id;
             $respon=
                 [
-                    'salvo' => $membroAserEditadoOfkAnexo->save(),
+                    'salvo' =>   $membroAserEditadoOfkAnexo->save(),
                     'fk_anexo' => $membroAserEditadoOfkAnexo->fk_anexo
                 ];
         } catch (\Throwable $e) {
