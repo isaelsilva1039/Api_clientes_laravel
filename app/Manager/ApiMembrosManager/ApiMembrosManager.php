@@ -110,7 +110,7 @@ public function novoMembros(Request $request){
 
             header('Content-Type: image/png');
     
-            $url = storage_path($anexo->path);
+            $url = storage_path('app/'.$anexo->path);
             
             file_exists($url) ? null : throw new Exception('Arquivo não encontrado no caminho: ' . $url);
 
