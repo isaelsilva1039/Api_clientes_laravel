@@ -57,6 +57,10 @@ class ApiControllerMembros extends Controller
         return new JsonResponse($this->apiMembrosManager->salvarAnexo($request,$id));
     }
 
+    public function obtemQuantidadeMembros(){
+        return new JsonResponse($this->apiMembrosManager->obtemQuantidadeMembros());
+    }
+
 
     
 }

@@ -110,6 +110,8 @@ public function novoMembros(Request $request){
 
             header('Content-Type: image/png');
     
+            // $url = ('../storage/app/'.$anexo->path);
+
             $url = ('../storage/app/'.$anexo->path);
             
             file_exists($url) ? null : throw new Exception('Arquivo não encontrado no caminho: ' . $url);
@@ -128,9 +130,6 @@ public function novoMembros(Request $request){
     }
     
     
-
-
-
     public function buscarPorNome(Request $request){
         $status_code = 200;
        
@@ -200,4 +199,22 @@ public function novoMembros(Request $request){
         return $respon;
     }
 
+
+    public function obtemQuantidadeMembros(){
+        try {
+
+            $membro = Membro::with('igreja')
+                ->count();
+
+            $respon = ['Membros' => $membro ,
+            "status_code" =>  200
+        ];
+            
+        } catch (\Throwable $th) {
+            $respon = [
+                'Erro' => $th->getCode(),
+            ];
+        }
+        return $respon;
+    }
 }
