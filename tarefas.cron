@@ -1,0 +1,1 @@
+50 14 * * * /bin/bash /home/u119780054/public_html/public_html/run_commands.sh
