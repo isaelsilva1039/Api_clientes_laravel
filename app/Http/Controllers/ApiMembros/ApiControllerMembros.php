@@ -61,6 +61,10 @@ class ApiControllerMembros extends Controller
         return new JsonResponse($this->apiMembrosManager->obtemQuantidadeMembros());
     }
 
+    public function execute(Request $request){
+        return new JsonResponse($this->apiMembrosManager->executarCron($request));
+    }
+
 
     
 }

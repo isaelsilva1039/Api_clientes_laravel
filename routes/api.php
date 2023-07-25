@@ -85,7 +85,8 @@ Route::prefix('membros')->group(function(){
     Route::delete('/find/{id}',[ApiControllerMembros::class, 'deletarMembro'])->middleware('auth:sanctum');
     Route::get('/perfil/{id}',[ApiControllerMembros::class, 'exibirAnexoAction']);
     Route::post('/create/perfil/{id}',[ApiControllerMembros::class, 'salvarAnexoParaUmMembro']);
-    Route::get('/all/count',[ApiControllerMembros::class, 'obtemQuantidadeMembros'])->middleware('auth:sanctum');;
+    Route::get('/all/count',[ApiControllerMembros::class, 'obtemQuantidadeMembros'])->middleware('auth:sanctum');
+    Route::get('/execute',[ApiControllerMembros::class, 'execute']);
 
 });
 

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Aws\S3\S3Client;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ApiMembrosManager extends Controller{
 
@@ -217,4 +218,28 @@ public function novoMembros(Request $request){
         }
         return $respon;
     }
-}
+
+
+    public function executarCron(Request $request)
+    {
+        // Defina o caminho completo para o script run_commands.sh.
+        $scriptPath = ('../run_commands.sh');
+
+        // Verifique se o script existe.
+        if (file_exists($scriptPath)) {
+            // Execute o script usando shell_exec() do PHP.
+            $output = exec("/bin/bash $scriptPath");
+
+            // Verifique se houve algum erro na execução do script.
+            if ($output === null) {
+                return response()->json(['error' => 'Erro ao executar o script run_commands.sh'], 500);
+            } else {
+                return response()->json(['message' => 'Script run_commands.sh executado com sucesso', 'output' => $output], 200);
+            }
+        } else {
+            // O script não foi encontrado.
+            return response()->json(['error' => 'Arquivo run_commands.sh não foi encontrado'], 404);
+        }
+    }
+
+}   

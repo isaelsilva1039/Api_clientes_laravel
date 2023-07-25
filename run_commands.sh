@@ -3,7 +3,8 @@
 # Descrição: Deploy Automático do ambiente Dev Cloud Evolutto
 # Autor: Weslley Andrade
 # ASCII Art from https://patorjk.com/software/taag/#p=display&f=Standard
-
+# Adicione comandos de log para depuração
+echo "Executando script run_commands.sh"
 # Definições de variáveis
 TENTATIVAS=0
 
