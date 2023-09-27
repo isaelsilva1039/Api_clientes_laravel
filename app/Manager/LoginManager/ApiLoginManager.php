@@ -16,7 +16,7 @@ class ApiLoginManager extends Controller{
     // micros serviços para usar em qual quer controler   
     public function loginUsuario(Request $request){
        
-
+        $data=[];
 
         try {
             $status_code = 200;
@@ -41,7 +41,8 @@ class ApiLoginManager extends Controller{
                 ];
         
         } catch (\Throwable $th) {
-           throw new Exception("Error Processing Request", 2);
+            $data['mensagem'] = $th->getMessage();
+            $data['code'] = $th->getCode();
            
         }
 

@@ -32,12 +32,6 @@ Route::put('/clientes/{id}',    [ClienteController::class, 'update'])->middlewar
 Route::delete('/clientes/{id}', [ClienteController::class, 'destroy'])->middleware('auth:sanctum');
 
 
-// -------------------------- CAMERAS ISMAEL  -----------------------------------------------------------
-Route::get('/veiculos',         [VeiculoController::class, 'indexAction'])->middleware('auth:sanctum');  // pegar todos os veiculos cadastrado
-Route::post('/veiculos',         [VeiculoController::class, 'indexStore'])->middleware('auth:sanctum');  // cria um novo resgistro
-
-
-
 // -------------------------- LOGIN , CADASTRO USUARIO NOVO  -----------------------------------------------------------
 Route::prefix('auth')->group(function(){
     Route::post('/login',[LoginController::class, 'login']);

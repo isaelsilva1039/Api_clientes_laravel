@@ -13,6 +13,7 @@ class ApiControllerMembros extends Controller
     
     protected $apiMembrosManager ;
 
+    
     public  function __construct(ApiMembrosManager $apiMembrosManager)
     {
         $this->apiMembrosManager = $apiMembrosManager;

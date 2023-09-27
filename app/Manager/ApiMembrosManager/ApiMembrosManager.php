@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Manager\ApiMembrosManager;
 
 use App\Http\Controllers\Controller;
@@ -13,204 +14,213 @@ use Aws\S3\S3Client;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
-class ApiMembrosManager extends Controller{
+class ApiMembrosManager extends Controller
+{
 
-    // pegar todas as esclas   
-    public function membros($request){
+       
+    public function membros($request)
+    {
 
         $status_code = 200;
         try {
-            $membro = Membro::with('igreja', 'tipo','anexo')->get()->sortByDesc('id')->values();
-                $respon = ['Membros' => $membro ,
-                "status_code" => $status_code 
+
+            // Defina um número padrão de itens por página.
+            $perPage = $request->input('per_page', 5);
+
+            $membro = Membro::with('igreja', 'tipo', 'anexo')->orderByDesc('id')->paginate($perPage);
+            
+            $respon = [
+                'Membros'       => $membro,
+                "status_code"   => $status_code
             ];
-        
+
         } catch (\Throwable $e) {
-            $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
+            
+            $respon = ["Error" => $e->getMessage(), "status_code" => $status_code = 400];
+        
         }
-        
+
         return $respon;
     }
 
 
 
-   // pegar todas as esclas   
-public function novoMembros(Request $request){
-        
-    $status_code = 200;
-       
-    try {
-        $membro = $request->all();
-        // $anexo = $request->file('file');
+    // pegar todas as esclas   
+    public function novoMembros(Request $request)
+    {
 
-        // $path = $anexo->store('anexos');
-        // $url  = Storage::url($path);
+        $status_code = 200;
 
-        // $anexo = Anexo::create(
-        //     ['path' => $path,
-        //      'name' => $anexo->getClientOriginalName(),
-        //      'url' => $url
+        try {
+            $membro = $request->all();
+            // $anexo = $request->file('file');
 
-        // ]);
+            // $path = $anexo->store('anexos');
+            // $url  = Storage::url($path);
 
-        // $membro['fk_anexo'] = $anexo->id;
+            // $anexo = Anexo::create(
+            //     ['path' => $path,
+            //      'name' => $anexo->getClientOriginalName(),
+            //      'url' => $url
 
-        $membro = Membro::create($membro);
+            // ]);
 
-        $respon = [
-            'Membro' => $membro,
-            'status_code' => $status_code
-        ];
-        
-    } catch (\Throwable $e) {
-        $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
-    }
-        
+            // $membro['fk_anexo'] = $anexo->id;
+
+            $membro = Membro::create($membro);
+
+            $respon = [
+                'Membro' => $membro,
+                'status_code' => $status_code
+            ];
+        } catch (\Throwable $e) {
+            $respon = ["Error" => $e->getMessage(), "status_code" => $status_code = 400];
+        }
+
         return $respon;
     }
 
 
 
-    public function salvarAnexo(Request $request,$id){
-        
+    public function salvarAnexo(Request $request, $id)
+    {
+
         try {
             $anexo = $request->file('file');
 
             $path = $anexo->store('anexos');
-        
+
             $url  = Storage::url($path);
 
             $anexo = Anexo::create(
-                ['path' => $path,
-                'name' => $anexo->getClientOriginalName(),
-                'url' => $url
+                [
+                    'path' => $path,
+                    'name' => $anexo->getClientOriginalName(),
+                    'url' => $url
 
-            ]);
+                ]
+            );
 
             $membroAserEditadoOfkAnexo = $this->buscarPorId($id);
             $membroAserEditadoOfkAnexo->fk_anexo = $anexo->id;
-            $respon=
+            $respon =
                 [
                     'salvo' =>   $membroAserEditadoOfkAnexo->save(),
                     'fk_anexo' => $membroAserEditadoOfkAnexo->fk_anexo
                 ];
         } catch (\Throwable $e) {
-            $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
+            $respon = ["Error" => $e->getMessage(), "status_code" => $status_code = 400];
         }
-            
-            return $respon;
-         
+
+        return $respon;
     }
-    
+
     public function exibirAnexo($id)
     {
 
         try {
 
-            $anexo = Anexo::findOrFail($id);   
+            $anexo = Anexo::findOrFail($id);
 
             header('Content-Type: image/png');
-    
+
             // $url = ('../storage/app/'.$anexo->path);
 
-            $url = ('../storage/app/'.$anexo->path);
-            
+            $url = ('../storage/app/' . $anexo->path);
+
             file_exists($url) ? null : throw new Exception('Arquivo não encontrado no caminho: ' . $url);
 
             header('Content-Disposition: attachment; filename=' . $anexo->name);
 
             return readfile($url);
-
         } catch (\Throwable $e) {
-            return  $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
-            
+            return  $respon = ["Error" => $e->getMessage(), "status_code" => $status_code = 400];
         }
-
-        
-
     }
-    
-    
-    public function buscarPorNome(Request $request){
+
+
+    public function buscarPorNome(Request $request)
+    {
         $status_code = 200;
-       
+
         try {
             $nome = $request->input('nome');
             $membro = Membro::with('igreja', 'tipo')
-                ->where('nome_membro', 'like', '%'.$nome.'%')
+                ->where('nome_membro', 'like', '%' . $nome . '%')
                 ->get();
 
             $respon = [
-                'Membro' => $membro ,
+                'Membro' => $membro,
                 "status_code" => $status_code
             ];
-        
         } catch (\Throwable $e) {
-            $respon=["Erro ao buscar por nome" => $e->getMessage() , "status_code" => $status_code = 400]; 
+            $respon = ["Erro ao buscar por nome" => $e->getMessage(), "status_code" => $status_code = 400];
         }
-        
+
         return $respon;
     }
 
 
-    public function buscarPorId($id){
- 
-        $status_code = 200;
-            try {
+    public function buscarPorId($id)
+    {
 
-                $membro = Membro::with('igreja', 'tipo')->findOrFail($id); 
-                $respon = $membro;
-            
-            } catch (\Throwable $e) {
-                $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
-            }
-            
-            return $respon;
+        $status_code = 200;
+        try {
+
+            $membro = Membro::with('igreja', 'tipo')->findOrFail($id);
+            $respon = $membro;
+        } catch (\Throwable $e) {
+            $respon = ["Error" => $e->getMessage(), "status_code" => $status_code = 400];
         }
 
+        return $respon;
+    }
 
-    public function editar($id, $request){
+
+    public function editar($id, $request)
+    {
         $status_code = 400;
         try {
             $dadosAseremAtualizadoDoMembro = $request->all();
             $membro = $this->buscarPorId($id);
-            
+
             $membroAtualidado = $membro->update($dadosAseremAtualizadoDoMembro);
             $status_code = 200;
-            $respon = ['Membro' => $membroAtualidado ,"status_code" => $status_code];
-        
+            $respon = ['Membro' => $membroAtualidado, "status_code" => $status_code];
         } catch (\Throwable $e) {
-            $respon=["Error" => $e->getMessage() , "status_code" => $status_code]; 
+            $respon = ["Error" => $e->getMessage(), "status_code" => $status_code];
         }
 
         return $respon;
     }
 
 
-    public function delete($id){
+    public function delete($id)
+    {
 
-        try{
+        try {
             $membroAserExcluido = $this->buscarPorId($id);
             $membro = Membro::destroy($id);
-            $respon = ['Excluido' => $membroAserExcluido ,"status_code" => $status_code =200];
-          }catch(\Throwable $e){
-            $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
-          }
+            $respon = ['Excluido' => $membroAserExcluido, "status_code" => $status_code = 200];
+        } catch (\Throwable $e) {
+            $respon = ["Error" => $e->getMessage(), "status_code" => $status_code = 400];
+        }
 
         return $respon;
     }
 
 
-    public function obtemQuantidadeMembros(){
+    public function obtemQuantidadeMembros()
+    {
         try {
 
             $membro = Membro::with('igreja')
                 ->count();
 
-            $respon = ['Membros' => $membro ,
-            "status_code" =>  200
-        ];
-            
+            $respon = [
+                'Membros' => $membro,
+                "status_code" =>  200
+            ];
         } catch (\Throwable $th) {
             $respon = [
                 'Erro' => $th->getCode(),
@@ -241,5 +251,4 @@ public function novoMembros(Request $request){
             return response()->json(['error' => 'Arquivo run_commands.sh não foi encontrado'], 404);
         }
     }
-
-}   
+}
