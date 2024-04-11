@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0527907b42b1ad3fe61e25bd839aec16",
+    "content-hash": "047af229a21d48a0fc7dc67920a537a2",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -205,6 +205,55 @@
                 }
             ],
             "time": "2022-08-10T22:54:19+00:00"
+        },
+        {
+            "name": "codephix/asaas-sdk",
+            "version": "v2.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codephix/asaas-sdk.git",
+                "reference": "37049fd012cdecd092b0ffce59826289780d2f33"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codephix/asaas-sdk/zipball/37049fd012cdecd092b0ffce59826289780d2f33",
+                "reference": "37049fd012cdecd092b0ffce59826289780d2f33",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CodePhix\\Asaas\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Max Alex",
+                    "email": "contato@codephix.com",
+                    "homepage": "https://www.codephix.com"
+                }
+            ],
+            "description": "Asaas.com PHP API Wrapper",
+            "homepage": "http://www.codephix.com",
+            "keywords": [
+                "Asaas",
+                "Payment SaaS",
+                "api",
+                "boleto",
+                "credit card"
+            ],
+            "support": {
+                "issues": "https://github.com/codephix/asaas-sdk/issues",
+                "source": "https://github.com/codephix/asaas-sdk/tree/v2.0.5"
+            },
+            "time": "2022-03-15T03:32:52+00:00"
         },
         {
             "name": "dflydev/dot-access-data",

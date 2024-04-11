@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
 use App\Http\Controllers\ClienteController;
@@ -85,10 +86,16 @@ Route::prefix('membros')->group(function(){
 });
 
 Route::prefix('igrejas')->group(function(){
-    Route::get('/all',[IgrejaController::class, 'indexAllIgrejas'])->middleware('auth:sanctum');
     Route::get('/tipos',[TipoController::class, 'indexAllTipos'])->middleware('auth:sanctum');
 });
 
+
+
+
+// ROTAS RACCA
+Route::prefix('racca')->group(function(){
+    Route::get('/novo-cliente/webwook',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'indexCliente']);
+});
 
 
 
