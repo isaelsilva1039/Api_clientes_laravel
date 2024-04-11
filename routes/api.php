@@ -94,7 +94,7 @@ Route::prefix('igrejas')->group(function(){
 
 // ROTAS RACCA
 Route::prefix('racca')->group(function(){
-    Route::get('/novo-cliente/webwook',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'indexCliente']);
+    Route::post('/novo-cliente/webwook',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'indexCliente']);
 });
 
 
