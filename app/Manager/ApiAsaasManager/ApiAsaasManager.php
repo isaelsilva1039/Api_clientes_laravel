@@ -22,7 +22,7 @@ class ApiAsaasManager extends Controller
         $asaas = new Asaas($apiKey);
     
         try {
-            if ($status == 'completed' && !empty($lineItems)) {
+            // if ($status == 'completed' && !empty($lineItems)) {
                 
                 // Pegando o nome do primeiro produto - ajuste conforme necessário
                 $productName = $lineItems[0]['name'] ?? 'Produto não especificado';
@@ -44,9 +44,9 @@ class ApiAsaasManager extends Controller
                     "notificationDisabled" => !$request->input('is_paying_customer', true),
                     "observations" => $observations,
                 ]);
-            }else {
-                $data =  'Pagamento ainda está pendente';
-            }
+            // }else {
+            //     $data =  'Pagamento ainda está pendente';
+            // }
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
             $data = response()->json(['error' => 'Falha na requisição', 'details' => $e->getMessage()], 500);
         }
