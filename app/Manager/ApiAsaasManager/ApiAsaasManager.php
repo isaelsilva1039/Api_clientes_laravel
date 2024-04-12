@@ -43,9 +43,17 @@ class ApiAsaasManager extends Controller
         Log::info('Request billing data: ' . json_encode($billing));
         Log::info('Request line items: ' . json_encode($lineItems));
 
+        
         $asaas = new Asaas(self::CHAVE_API_ASSAS);
 
         try {
+
+            if ($status !== 'completed') {
+                Log::info('Pedido não está completo. Status atual: ' . $status);
+                return response()->json(['error' => 'Pedido não está completo, não é possível processar.'], 400);
+            }
+    
+
             $productName = $lineItems[0]['name'] ?? 'Produto não especificado';
             $observations = "Cliente importado do sistema X - Plano: {$productName}";
 
