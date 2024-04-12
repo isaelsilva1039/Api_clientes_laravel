@@ -9,6 +9,7 @@ use CodePhix\Asaas\Asaas;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ApiAsaasManager extends Controller
 {
@@ -32,7 +33,6 @@ class ApiAsaasManager extends Controller
     }
 
 
-
     /**
      * @param Request $request
      * @return array $data
@@ -42,16 +42,13 @@ class ApiAsaasManager extends Controller
         $billing = $request->input('billing', []);
         $status = $request->input('status');
         $lineItems = $request->input('line_items', []);
-
+        Log::error('request - > retorno : ' . $request);
+        Log::error('billing - > retorno : ' . $billing);
 
         $asaas = new Asaas(ApiAsaasManager::CHAVE_API_ASSAS);
 
-        // try {
-            // if ($status == 'completed' && !empty($lineItems)) {
-
-            // Pegando o nome do primeiro produto - ajuste conforme necessário
+        try {
             $productName = $lineItems[0]['name'] ?? 'Produto não especificado';
-
             $observations = "Cliente importado do sistema X - Plano: {$productName}";
 
             $dados = [
@@ -71,20 +68,19 @@ class ApiAsaasManager extends Controller
             ];
 
             $data = $asaas->Cliente()->create($dados);
-
-            // caso tenha salva no ASSAS, nós tambem salva no nosso banco de dados
-            if($data){
-                $data  = $this->apiManagerCadastro->inserirNoBanco($dados);
+            if ($data) {
+                Log::error('Entrou para adicionar no banco: ' . $data);
+                $data = $this->apiManagerCadastro->inserirNoBanco($dados);
+                Log::error('Entrou para adicionar no banco - > retorno : ' . $data);
             }
-            // }else {
-            //     $data =  'Pagamento ainda está pendente';
-            // }
-        // } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-        //     $data = response()->json(['error' => 'Falha na requisição', 'details' => $e->getMessage()], 500);
-        // }
+        } catch (\Throwable $e) {
+            Log::error('Erro ao criar cliente: ' . $e->getMessage());
+            return response()->json(['error' => 'Falha na requisição', 'details' => $e->getMessage()], 500);
+        }
 
         return $data;
     }
+
 
 
 }
