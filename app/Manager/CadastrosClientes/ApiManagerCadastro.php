@@ -1,32 +1,37 @@
-<?php 
+<?php
 namespace App\Manager\CadastrosClientes;
 
 use App\Http\Controllers\Controller;
 use App\Models\CadastrosCliente\Cadastro;
+use App\Models\Cliente;
 
-class ApiManagerCadastro extends Controller{
+class ApiManagerCadastro extends Controller
+{
+    
 
-    // micros serviços para usar em qual quer controler   
-    public function novoCadastro($request){
+    /**
+     * Insere um novo registro no banco de dados baseado no modelo e nos dados fornecidos.
+     *
+     * @param array $data Dados para criar um novo registro.
+     * @param string $modelClass Classe do modelo para criação do registro.
+     * @return array Resposta com os dados inseridos ou uma mensagem de erro.
+     */
+    public function inserirNoBanco(array $data)
+    {
         $status_code = 200;
-       
-        try {
-           // valida dados da request
-            // $request->validate(['nome' => 'required','sobrenome' => 'required','cpf' => 'required','data_nacimento' => 'required']);
- 
-            $user['user_id'] =  auth()->user()->id;
-            $request = $request->all();
-            $request = array_merge($user,$request);
-            
-            $cadastro = Cadastro::create($request); 
 
-            $respon = ['dados_cadastrado' => $cadastro ,"status_code" => $status_code =200];
-        
+        try {
+       
+            $registro = Cliente::create($data);
+
+            $resposta = ['dados_cadastrados' => $registro, "status_code" => 200];
         } catch (\Throwable $e) {
-            $respon=["Error" => $e->getMessage() , "status_code" => $status_code = 400]; 
+  
+            $resposta = ["Error" => $e->getMessage(), "status_code" => 400];
         }
-        
-        return $respon;
+
+        return $resposta;
     }
+
 }
 ?>

@@ -14,13 +14,7 @@ class Cliente extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'motorista',
-        'carro',
-        'placa',
-        'stado',
-        'cidade',
-        'endereco',
-    ];
+    protected $fillable = ['name', 'email', 'phone', 'mobilePhone', 'cpfCnpj', 'postalCode', 'address', 'addressNumber', 'complement', 'province', 'externalReference', 'notificationDisabled', 'observations', 'updated_at', 'created_at'];
+
 
 }
