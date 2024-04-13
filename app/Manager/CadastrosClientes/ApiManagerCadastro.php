@@ -13,24 +13,27 @@ class ApiManagerCadastro extends Controller
      * Insere um novo registro no banco de dados baseado no modelo e nos dados fornecidos.
      *
      * @param array $data Dados para criar um novo registro.
-     * @param string $modelClass Classe do modelo para criação do registro.
-     * @return array Resposta com os dados inseridos ou uma mensagem de erro.
+     * @param string $id_cliente_assas id do cliente no assas -> sistema financeiro.
+     * @return Cliente
      */
-    public function inserirNoBanco(array $data)
+    public function inserirNoBanco(array $data, $id_cliente_assas)
     {
         $status_code = 200;
 
         try {
-       
+            
+            // Adiciona o ID do cliente do Asaas aos dados antes de inserir no banco
+            $data['id_cliente_assas'] = $id_cliente_assas;
+            
             $registro = Cliente::create($data);
 
-            $resposta = ['dados_cadastrados' => $registro, "status_code" => 200];
+
         } catch (\Throwable $e) {
   
-            $resposta = ["Error" => $e->getMessage(), "status_code" => 400];
+            $registro = ["Error" => $e->getMessage(), "status_code" => 400];
         }
 
-        return $resposta;
+        return $registro;
     }
 
 }
