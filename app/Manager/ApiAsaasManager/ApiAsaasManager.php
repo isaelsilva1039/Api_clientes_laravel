@@ -19,8 +19,10 @@ class ApiAsaasManager extends Controller
 {
 
     // TODO: Remover essa chave daqui e levar para o env
-    const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTEwODU6OiRhYWNoXzE4MzNiYzc5LWVlZDYtNGNjNS1iMzQ5LWExMjZiNGRkYzlkZA==';
+    // const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTEwODU6OiRhYWNoXzE4MzNiYzc5LWVlZDYtNGNjNS1iMzQ5LWExMjZiNGRkYzlkZA==';
+     const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTIwNTY6OiRhYWNoXzZiOWFkNmE2LWViOGItNGUwMC1hZDAwLTY2ODU3YmRkYmIxMg==';
 
+    
 
     /**
      * @var ApiManagerCadastro $apiManagerCadastro 
@@ -37,6 +39,11 @@ class ApiAsaasManager extends Controller
     }
 
 
+
+    /**
+     * Esse metodo é chama no controller
+     * do webhook 
+     */
     public function novoCliente(Request $request)
     {
         $cliente=[];
@@ -52,12 +59,12 @@ class ApiAsaasManager extends Controller
 
         $asaas = new Asaas(self::CHAVE_API_ASSAS);
 
-        // try {
+        try {
 
-            // if ($status !== 'completed') {
-            //     Log::info('Pedido não está completo. Status atual: ' . $status);
-            //     return response()->json(['error' => 'Pedido não está completo, não é possível processar.'], 400);
-            // }
+            if ($status !== 'completed') {
+                Log::info('Pedido não está completo. Status atual: ' . $status);
+                return response()->json(['error' => 'Pedido não está completo, não é possível processar.'], 400);
+            }
 
 
             $productName = $lineItems[0]['name'] ?? 'Produto não especificado';
@@ -74,6 +81,7 @@ class ApiAsaasManager extends Controller
             }
            
             $observations = "Cliente importado do sistema X - Plano: {$productName}" . "Data de nascimento: " .$birthdate;
+
 
             $dados = [
                 "name" => ($billing['first_name'] ?? 'Nome não informado') . ' ' . ($billing['last_name'] ?? ''),
@@ -94,6 +102,10 @@ class ApiAsaasManager extends Controller
                 "observations" => $observations,
             ];
 
+
+            /**
+             * Adicionar o cliente no asaas
+             */
             $data = $asaas->Cliente()->create($dados);
 
             if ($data) {
@@ -133,18 +145,13 @@ class ApiAsaasManager extends Controller
 
                         $cliente->dependentes()->save($dependente);
                     }
-
-
                 }
-
-
             }
 
-
-        // } catch (\Throwable $e) {
-        //     Log::error('Erro ao criar cliente: ' . $e->getMessage());
-        //     return response()->json(['error' => 'Falha na requisição', 'details' => $e->getMessage()], 500);
-        // }
+        } catch (\Throwable $e) {
+            Log::error('Erro ao criar cliente: ' . $e->getMessage());
+            return response()->json(['error' => 'Falha na requisição', 'details' => $e->getMessage()], 500);
+        }
 
         return $cliente;
     }
