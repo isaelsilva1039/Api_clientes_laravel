@@ -78,6 +78,7 @@ class ApiAsaasManager extends Controller
             if($birthdate){
                
                 $birthdate = Carbon::createFromFormat('m-d-Y\TH:i:s', $birthdate)->format('Y-m-d');
+
             }
            
             $observations = "Cliente importado do sistema X - Plano: {$productName}" . "Data de nascimento: " .$birthdate;
