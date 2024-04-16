@@ -1,28 +1,27 @@
-name: Deploy via ftp
+name: Deploy via FTP
+
 on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        name: Checkout code
 
-      # Adiciona uma etapa para instalar as dependências necessárias (se houver)
       - name: Install Dependencies
         run: npm install
 
-      # Adiciona uma etapa para construir seu projeto e criar o diretório 'dist'
       - name: Build Project
         run: npm run build
 
-      # Adiciona uma etapa para listar os arquivos (opcional, para debug)
       - name: List files in the workspace
-        run: ls -la 
+        run: ls -la dist
 
-      # Etapa para fazer o deploy via FTP
       - name: FTP Deploy Locaweb
         uses: locaweb/ftp-deploy@1.0.0
         with:
