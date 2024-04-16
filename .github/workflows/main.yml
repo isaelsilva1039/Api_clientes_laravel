@@ -1,4 +1,5 @@
 name: Deploy via FTP
+
 on:
   push:
     branches:
@@ -23,21 +24,17 @@ jobs:
 
       - name: Test FTP Connection
         run: |
-          apt-get update
-          apt-get install -y ftp
           ftp -inv ${{ secrets.ftp_host }} << EOF
           user ${{ secrets.ftp_user }} ${{ secrets.ftp_password }}
           bye
           EOF
 
-
       - name: FTP Deploy Locaweb
         uses: locaweb/ftp-deploy@1.0.0
         with:
-          host: ${{ secrets.ftp_host }}
-          user: ${{ secrets.ftp_user }}
-          password: ${{ secrets.ftp_password }}
+          host: ${{ secrets.FTP_HOST }}
+          user: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
           localDir: "dist"
           remoteDir: "public_html"
           forceSSL: false
-
