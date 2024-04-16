@@ -38,3 +38,4 @@ jobs:
           localDir: "public" # Laravel utiliza o diretório 'public' para arquivos acessíveis publicamente
           remoteDir: "public_html"
           forceSSL: false
+
