@@ -1,17 +1,8 @@
-name: Deploy via FTP
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        name: Checkout code
 
       - name: Install Dependencies
         run: npm install
@@ -19,8 +10,14 @@ jobs:
       - name: Build Project
         run: npm run build
 
-      - name: List files in the workspace
-        run: ls -la dist
+      - name: Test FTP Connection
+        run: |
+          apt-get update
+          apt-get install -y ftp
+          ftp -inv ${{ secrets.ftp_host }} << EOF
+          user ${{ secrets.ftp_user }} ${{ secrets.ftp_password }}
+          bye
+          EOF
 
       - name: FTP Deploy Locaweb
         uses: locaweb/ftp-deploy@1.0.0
