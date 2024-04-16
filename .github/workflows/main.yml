@@ -18,12 +18,13 @@ jobs:
 
       - name: Test FTP Connection
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ftp
+          apt-get update
+          apt-get install -y ftp
           ftp -inv ${{ secrets.ftp_host }} << EOF
           user ${{ secrets.ftp_user }} ${{ secrets.ftp_password }}
           bye
           EOF
+
 
       - name: FTP Deploy Locaweb
         uses: locaweb/ftp-deploy@1.0.0
@@ -33,3 +34,5 @@ jobs:
           password: ${{ secrets.ftp_password }}
           localDir: "dist"
           remoteDir: "public_html"
+          forceSSL: false
+
