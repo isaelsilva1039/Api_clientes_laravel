@@ -62,6 +62,7 @@ class ApiAsaasManager extends Controller
             'base_uri' => 'https://www.asaas.com/api/v3/',
             'headers' => [
                 'Content-Type' => 'application/json',
+                'X-API-Key' => self::CHAVE_API_ASSAS,
                 'access_token' => self::CHAVE_API_ASSAS,
             ]
         ]);
