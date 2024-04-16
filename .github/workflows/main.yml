@@ -20,7 +20,10 @@ jobs:
 
       # Adiciona uma etapa para listar os arquivos (opcional, para debug)
       - name: List files in the workspace
-        run: ls -la
+        run: ls -la 
+        
+      - run: ls -la
+        working-directory: ${{ github.workspace }}/tmp
 
       # Etapa para fazer o deploy via FTP
       - name: FTP Deploy Locaweb
