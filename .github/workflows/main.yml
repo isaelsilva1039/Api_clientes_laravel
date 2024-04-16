@@ -18,8 +18,8 @@ jobs:
 
       - name: Test FTP Connection
         run: |
-          apt-get update
-          apt-get install -y ftp
+          sudo apt-get update
+          sudo apt-get install -y ftp
           ftp -inv ${{ secrets.ftp_host }} << EOF
           user ${{ secrets.ftp_user }} ${{ secrets.ftp_password }}
           bye
