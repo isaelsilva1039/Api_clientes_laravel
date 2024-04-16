@@ -29,5 +29,8 @@ jobs:
           host: ${{ secrets.ftp_host }}
           user: ${{ secrets.ftp_user }}
           password: ${{ secrets.ftp_password }}
-          localDir: "./"
+          localDir:
+            description: 'Local directory'
+            required: false
+            default: '.'
           remoteDir: "public_html"
