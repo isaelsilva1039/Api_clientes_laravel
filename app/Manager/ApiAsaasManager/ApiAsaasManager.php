@@ -54,9 +54,9 @@ class ApiAsaasManager extends Controller
 
         $total = $request->input('total');
 
-        // // Logar os dados de entrada para fins de depuração (assegure-se de não logar dados sensíveis em produção)
-        // Log::info('Request billing data: ' . json_encode($billing));
-        // Log::info('Request line items: ' . json_encode($lineItems));
+        // Logar os dados de entrada para fins de depuração (assegure-se de não logar dados sensíveis em produção)
+        Log::info('Request billing data: ' . json_encode($billing));
+        Log::info('Request line items: ' . json_encode($lineItems));
 
         $client = new Client([
             'base_uri' => 'https://www.asaas.com/api/v3/',
@@ -68,19 +68,19 @@ class ApiAsaasManager extends Controller
         ]);
 
         try {
-            // if ($status !== 'completed') {
-            //     Log::info('Pedido não está completo. Status atual: ' . $status);
-            //     return response()->json(['error' => 'Pedido não está completo, não é possível processar.'], 400);
-            // }
+            if ($status !== 'completed') {
+                Log::info('Pedido não está completo. Status atual: ' . $status);
+                return response()->json(['error' => 'Pedido não está completo, não é possível processar.'], 400);
+            }
 
-            // $productName = $lineItems[0]['name'] ?? 'Produto não especificado';
+            $productName = $lineItems[0]['name'] ?? 'Produto não especificado';
 
-            // $birthdate = trim($billing['birthdate'] ?? '');
-            // if ($birthdate) {
-            //     $birthdate = Carbon::createFromFormat('m-d-Y\TH:i:s', $birthdate)->format('Y-m-d');
-            // }
+            $birthdate = trim($billing['birthdate'] ?? '');
+            if ($birthdate) {
+                $birthdate = Carbon::createFromFormat('m-d-Y\TH:i:s', $birthdate)->format('Y-m-d');
+            }
 
-            // $observations = "Cliente importado do sistema X - Plano: {$productName} Data de nascimento: {$birthdate}";
+            $observations = "Cliente importado do sistema X - Plano: {$productName} Data de nascimento: {$birthdate}";
 
             $dados = [
                 "name" => ($billing['first_name'] ?? 'Nome não informado') . ' ' . ($billing['last_name'] ?? ''),
@@ -88,7 +88,7 @@ class ApiAsaasManager extends Controller
                 "phone" => $billing['phone'] ?? '',
                 "mobilePhone" => $billing['cellphone'] ?? '',
                 "cpfCnpj" => $billing['cpf'] ?? ($billing['cnpj'] ?? 'CPF/CNPJ não informado'),
-                // "plano" => $productName,
+                "plano" => $productName,
                 "postalCode" => $billing['postcode'] ?? '',
                 "address" => $billing['address_1'] ?? '',
                 "addressNumber" => $billing['number'] ?? '',
@@ -96,9 +96,9 @@ class ApiAsaasManager extends Controller
                 "province" => $billing['neighborhood'] ?? '',
                 "externalReference" => $request->input('id', ''),
                 "notificationDisabled" => !$request->input('is_paying_customer', true),
-                // "date_of_birth" => $birthdate,
+                "date_of_birth" => $birthdate,
                 "total" => $total,
-                // "observations" => $observations,
+                "observations" => $observations,
             ];
 
             $response = $client->post('customers', [
@@ -106,39 +106,39 @@ class ApiAsaasManager extends Controller
             ]);
 
             $data = json_decode($response->getBody()->getContents(), true);
-            // if (!isset($data['id'])) {
-            //     throw new Exception('Falha ao obter ID do cliente da resposta da API.');
-            // }
+            if (!isset($data['id'])) {
+                throw new Exception('Falha ao obter ID do cliente da resposta da API.');
+            }
 
-            // $id_cliente_assas = $data['id'];
-            // $cliente = $this->apiManagerCadastro->inserirNoBanco($dados, $id_cliente_assas, $productName);
+            $id_cliente_assas = $data['id'];
+            $cliente = $this->apiManagerCadastro->inserirNoBanco($dados, $id_cliente_assas, $productName);
 
-            // $this->createAssinatura($total, $id_cliente_assas);
+            $this->createAssinatura($total, $id_cliente_assas);
 
-            // $dependentes = DependentDTO::fromRequest($lineItems);
-            // if ($dependentes) {
-            //     foreach ($dependentes as $depData) {
-            //         $dataNascimento = Carbon::createFromFormat('d/m/Y', $depData['data_de_nascimento'])->format('Y-m-d');
+            $dependentes = DependentDTO::fromRequest($lineItems);
+            if ($dependentes) {
+                foreach ($dependentes as $depData) {
+                    $dataNascimento = Carbon::createFromFormat('d/m/Y', $depData['data_de_nascimento'])->format('Y-m-d');
 
-            //         $dependente = new Dependente([
-            //             'nome' => $depData['nome'],
-            //             'email' => $depData['email'],
-            //             'cpf' => $depData['cpf'],
-            //             'data_de_nascimento' => $dataNascimento,
-            //             'endereco' => $depData['endereco'],
-            //             'bairro' => $depData['bairro'],
-            //             'cidade' => $depData['cidade'],
-            //             'estado' => $depData['estado'],
-            //             'celular' => $depData['celular'],
-            //             'numero' => $depData['numero']
-            //         ]);
+                    $dependente = new Dependente([
+                        'nome' => $depData['nome'],
+                        'email' => $depData['email'],
+                        'cpf' => $depData['cpf'],
+                        'data_de_nascimento' => $dataNascimento,
+                        'endereco' => $depData['endereco'],
+                        'bairro' => $depData['bairro'],
+                        'cidade' => $depData['cidade'],
+                        'estado' => $depData['estado'],
+                        'celular' => $depData['celular'],
+                        'numero' => $depData['numero']
+                    ]);
 
-            //         $cliente->dependentes()->save($dependente);
-            //     }
-            // }
+                    $cliente->dependentes()->save($dependente);
+                }
+            }
 
         } catch (GuzzleException $e) {
-            // Log::error('Erro ao criar cliente: ' . $e->getMessage());
+            Log::error('Erro ao criar cliente: ' . $e->getMessage());
             return response()->json(['error' => 'Falha na requisição', 'details' => $e->getMessage()], 500);
         }
 
