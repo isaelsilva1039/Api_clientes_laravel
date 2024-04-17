@@ -21,8 +21,10 @@ class ApiAsaasManager extends Controller
 {
 
     // TODO: Remover essa chave daqui e levar para o env
-    const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTEwODU6OiRhYWNoXzE4MzNiYzc5LWVlZDYtNGNjNS1iMzQ5LWExMjZiNGRkYzlkZA==';
-    //  const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTIwNTY6OiRhYWNoXzZiOWFkNmE2LWViOGItNGUwMC1hZDAwLTY2ODU3YmRkYmIxMg==';
+    // ezeck
+    // const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTEwODU6OiRhYWNoXzE4MzNiYzc5LWVlZDYtNGNjNS1iMzQ5LWExMjZiNGRkYzlkZA==';
+    // prod
+     const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTIwNTY6OiRhYWNoXzZiOWFkNmE2LWViOGItNGUwMC1hZDAwLTY2ODU3YmRkYmIxMg==';
 
     
 
@@ -101,7 +103,7 @@ class ApiAsaasManager extends Controller
                 "observations" => $observations,
             ];
 
-            
+
             $response = $client->post('customers', [
                 'json' => $dados
             ]);
