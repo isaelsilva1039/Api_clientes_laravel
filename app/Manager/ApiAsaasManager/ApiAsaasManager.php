@@ -101,6 +101,7 @@ class ApiAsaasManager extends Controller
                 "observations" => $observations,
             ];
 
+            
             $response = $client->post('customers', [
                 'json' => $dados
             ]);
