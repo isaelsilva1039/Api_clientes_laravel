@@ -54,9 +54,9 @@ class ApiAsaasManager extends Controller
 
         $total = $request->input('total');
 
-        // Logar os dados de entrada para fins de depuração (assegure-se de não logar dados sensíveis em produção)
-        Log::info('Request billing data: ' . json_encode($billing));
-        Log::info('Request line items: ' . json_encode($lineItems));
+        // // Logar os dados de entrada para fins de depuração (assegure-se de não logar dados sensíveis em produção)
+        // Log::info('Request billing data: ' . json_encode($billing));
+        // Log::info('Request line items: ' . json_encode($lineItems));
 
         $client = new Client([
             'base_uri' => 'https://www.asaas.com/api/v3/',
@@ -138,7 +138,7 @@ class ApiAsaasManager extends Controller
             // }
 
         } catch (GuzzleException $e) {
-            Log::error('Erro ao criar cliente: ' . $e->getMessage());
+            // Log::error('Erro ao criar cliente: ' . $e->getMessage());
             return response()->json(['error' => 'Falha na requisição', 'details' => $e->getMessage()], 500);
         }
 
