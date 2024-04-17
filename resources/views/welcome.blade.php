@@ -28,7 +28,7 @@
     </head>
     <body>
         <div>
-            <h1>Bem-vindo ao Laravel!</h1>
+            <h1>Bem-vindo ao Racca saude!</h1>
             <p class="message">Aguarde... novidades em breve.</p>
         </div>
     </body>
