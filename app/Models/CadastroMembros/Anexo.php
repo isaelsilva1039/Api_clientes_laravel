@@ -19,7 +19,7 @@ class Anexo extends Model
     protected $fillable = [
         'name',
         'path',
-        // 'url'
+        'url'
     ];
 
     public $timestamps = false;

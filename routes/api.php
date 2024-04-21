@@ -10,6 +10,7 @@ use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Login\RegisterController;
 use App\Http\Controllers\Ocorencia\VeiculoController;
+use App\Http\Controllers\Profissional\ProfissionalController;
 use App\Http\Controllers\Tipo\TipoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -94,6 +95,14 @@ Route::prefix('igrejas')->group(function(){
 // ROTAS RACCA
 Route::prefix('racca')->group(function(){
     Route::post('/novo-cliente/webwook',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'indexCliente']);
+    
+});
+
+
+// ROTAS RACCA
+Route::prefix('racca/profissional')->group(function(){
+    Route::post('/novo',[ ProfissionalController::class, 'create']);
+    Route::get('/avatar/{id}',[ ProfissionalController::class, 'avatar'])->name('profissional.avatar');;
     
 });
 
