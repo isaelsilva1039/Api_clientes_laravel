@@ -39,6 +39,13 @@ class ApiProfissionalManager extends Controller
             /** @var Anexo $avatar */
             $avatar = $this->salvarAvatarProfissional($request);
 
+            if (!$avatar) {
+                return [
+                    'mensagem' => 'é preciso adicionar uma foto',
+                    'status' => 500
+                ];
+            }
+
             /** @var Profissional $novoProfissional */
             $novoProfissional = Profissional::create($request->all() + ['fk_anexo' => $avatar->id ?? null]);
 
@@ -84,6 +91,10 @@ class ApiProfissionalManager extends Controller
     {
         $anexo = $request->file('file');
 
+        if (!$anexo) {
+            return false;
+        }
+
         $path = $anexo->store('anexos');
 
         $url = Storage::url($path);
@@ -101,7 +112,6 @@ class ApiProfissionalManager extends Controller
         return $anexo;
 
     }
-
 
 
     public function exibirAvatar($id)
@@ -128,7 +138,38 @@ class ApiProfissionalManager extends Controller
 
 
 
+    public function buscarTodos(Request $request)
+{
+    $perPage = $request->input('per_page', 15);
+    $page = $request->input('page', 1);
+    $orderBy = $request->input('order_by', 'nome');
+    $sort = $request->input('sort', 'asc');
+    $especialidade = $request->input('especialidade');
 
+    $query = Profissional::with(['anexo']); // Carrega o relacionamento com Anexo
+
+    if ($especialidade) {
+        $query->where('especialidade', $especialidade);
+    }
+
+    $query->orderBy($orderBy, $sort);
+
+    $profissionais = $query->paginate($perPage, ['*'], 'page', $page);
+
+    // Adiciona a URL do anexo a cada profissional
+    $profissionais->getCollection()->transform(function ($profissional) {
+        if ($profissional->anexo) {
+            $profissional->avatarUrl = route('profissional.avatar', ['id' => $profissional->anexo->id]);
+        } else {
+            $profissional->avatarUrl = null; // Ou um caminho padrão para um avatar padrão
+        }
+        return $profissional;
+    });
+
+    return $profissionais;
+}
+
+    
 
 
 }

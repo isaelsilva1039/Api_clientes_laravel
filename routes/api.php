@@ -102,7 +102,10 @@ Route::prefix('racca')->group(function(){
 // ROTAS RACCA
 Route::prefix('racca/profissional')->group(function(){
     Route::post('/novo',[ ProfissionalController::class, 'create']);
-    Route::get('/avatar/{id}',[ ProfissionalController::class, 'avatar'])->name('profissional.avatar');;
+    Route::get('/avatar/{id}',[ ProfissionalController::class, 'avatar'])->name('profissional.avatar');
+
+    Route::get('/all',[ ProfissionalController::class, 'buscarTodos']);
+    
     
 });
 
