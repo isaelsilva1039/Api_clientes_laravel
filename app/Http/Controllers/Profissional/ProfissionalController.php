@@ -40,6 +40,13 @@ class ProfissionalController extends Controller
     }
 
 
+    public function update(Request $request,$id){
+            
+        return new JsonResponse($this->apiProfissionalManager->update($request, $id));
+    }
+
+
+    
 
     
 }

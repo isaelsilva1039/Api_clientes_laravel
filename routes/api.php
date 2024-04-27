@@ -105,6 +105,7 @@ Route::prefix('racca/profissional')->group(function(){
     Route::get('/avatar/{id}',[ ProfissionalController::class, 'avatar'])->name('profissional.avatar');
 
     Route::get('/all',[ ProfissionalController::class, 'buscarTodos']);
+    Route::post('/atualizar/{id}',[ ProfissionalController::class, 'update']);
     
     
 });
