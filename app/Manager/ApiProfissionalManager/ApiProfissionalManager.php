@@ -142,11 +142,11 @@ class ApiProfissionalManager extends Controller
 {
     $perPage = $request->input('per_page', 15);
     $page = $request->input('page', 1);
-    $orderBy = $request->input('order_by', 'nome');
-    $sort = $request->input('sort', 'asc');
+    $orderBy = $request->input('order_by', 'id');
+    $sort = $request->input('sort', 'desc');
     $especialidade = $request->input('especialidade');
 
-    $query = Profissional::with(['anexo']); // Carrega o relacionamento com Anexo
+    $query = Profissional::with(['anexo']);
 
     if ($especialidade) {
         $query->where('especialidade', $especialidade);
@@ -166,8 +166,16 @@ class ApiProfissionalManager extends Controller
         return $profissional;
     });
 
-    return $profissionais;
+    // Estrutura a resposta para incluir detalhes da paginação
+    return response()->json([
+        'data' => $profissionais->items(), // Os profissionais na página atual
+        'total' => $profissionais->total(), // Total de profissionais
+        'perPage' => $profissionais->perPage(), // Itens por página
+        'currentPage' => $profissionais->currentPage(), // Página atual
+        'lastPage' => $profissionais->lastPage(), // Última página
+    ]);
 }
+
 
     
 
