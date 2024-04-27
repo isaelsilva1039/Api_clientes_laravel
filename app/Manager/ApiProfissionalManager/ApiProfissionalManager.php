@@ -166,13 +166,12 @@ class ApiProfissionalManager extends Controller
         return $profissional;
     });
 
-    // Estrutura a resposta para incluir detalhes da paginação
     return response()->json([
-        'data' => $profissionais->items(), // Os profissionais na página atual
-        'total' => $profissionais->total(), // Total de profissionais
-        'perPage' => $profissionais->perPage(), // Itens por página
-        'currentPage' => $profissionais->currentPage(), // Página atual
-        'lastPage' => $profissionais->lastPage(), // Última página
+        'data' => $profissionais->items(), 
+        'total' => $profissionais->total(),
+        'perPage' => $profissionais->perPage(),
+        'currentPage' => $profissionais->currentPage(),
+        'lastPage' => $profissionais->lastPage(),
     ]);
 }
 
