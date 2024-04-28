@@ -72,11 +72,17 @@ class ApiProfissionalManager extends Controller
      */
     public function buscarPorCpf(Request $request)
     {
-        $cpf = $request->cpf; // Pega o CPF enviado via request
-
-        $profissional = Profissional::where('cpf', $cpf)->first(); // Busca o primeiro profissional com o CPF fornecido
-
-
+        $cpf = $request->cpf;
+        $incluiDeletados = $request->boolean('inclui_deletados', false);
+    
+        $query = Profissional::where('cpf', $cpf);
+    
+        if ($incluiDeletados) {
+            $query->withTrashed();
+        }
+    
+        $profissional = $query->first();
+    
         return $profissional;
     }
 
@@ -139,127 +145,151 @@ class ApiProfissionalManager extends Controller
 
 
     public function buscarTodos(Request $request)
-{
-    $perPage = $request->input('per_page', 15);
-    $page = $request->input('page', 1);
-    $orderBy = $request->input('order_by', 'id');
-    $sort = $request->input('sort', 'desc');
-    $especialidade = $request->input('especialidade');
+    {
+        $perPage = $request->input('per_page', 15);
+        $page = $request->input('page', 1);
+        $orderBy = $request->input('order_by', 'id');
+        $sort = $request->input('sort', 'desc');
+        $especialidade = $request->input('especialidade');
+        $termo = $request->input('termo');  // Recebe o termo de busca
 
-    $query = Profissional::with(['anexo']);
+        $query = Profissional::with(['anexo']);
 
-    if ($especialidade) {
-        $query->where('especialidade', $especialidade);
-    }
-
-    $query->orderBy($orderBy, $sort);
-
-    $profissionais = $query->paginate($perPage, ['*'], 'page', $page);
-
-    // Adiciona a URL do anexo a cada profissional
-    $profissionais->getCollection()->transform(function ($profissional) {
-        if ($profissional->anexo) {
-            $profissional->avatarUrl = route('profissional.avatar', ['id' => $profissional->anexo->id]);
-        } else {
-            $profissional->avatarUrl = null; // Ou um caminho padrão para um avatar padrão
-        }
-        return $profissional;
-    });
-
-    return response()->json([
-        'data' => $profissionais->items(), 
-        'total' => $profissionais->total(),
-        'perPage' => $profissionais->perPage(),
-        'currentPage' => $profissionais->currentPage(),
-        'lastPage' => $profissionais->lastPage(),
-    ]);
-}
-
-
-
-public function update(Request $request, $id)
-{
-    $status = 200;
-
-    try {
-        $profissional = Profissional::find($id);
-        if (!$profissional) {
-            return response()->json([
-                'mensagem' => 'Profissional não encontrado',
-                'status' => 400
-            ], 404);
+        if ($especialidade) {
+            $query->where('especialidade', $especialidade);
         }
 
-        // Verifica se o CPF é enviado e é diferente do existente
-        if ($request->filled('cpf') && $profissional->cpf !== $request->cpf) {
-            $existente = Profissional::where('cpf', $request->cpf)->first();
-            if ($existente) {
-                return response()->json([
-                    'mensagem' => 'Outro profissional já possui esse CPF',
-                    'status' => 400
-                ], 400);
+      
+        if ($termo !== null ) {
+            $query->where(function ($q) use ($termo) {
+                $q->where('nome', 'like', "%{$termo}%")
+                ->orWhere('cpf', 'like', "%{$termo}%")
+                ->orWhere('email', 'like', "%{$termo}%");
+            });
+        }
+
+        $query->orderBy($orderBy, $sort);
+
+        $profissionais = $query->paginate($perPage, ['*'], 'page', $page);
+
+        // Adiciona a URL do anexo a cada profissional
+        $profissionais->getCollection()->transform(function ($profissional) {
+            if ($profissional->anexo) {
+                $profissional->avatarUrl = route('profissional.avatar', ['id' => $profissional->anexo->id]);
+            } else {
+                $profissional->avatarUrl = null; // Ou um caminho padrão para um avatar padrão
             }
-            $profissional->cpf = $request->cpf;
-        }
+            return $profissional;
+        });
 
-
-
-
-        // Verifica se o CPF é enviado e é diferente do existente
-        if ($request->filled('email') && $profissional->email !== $request->email) {
-            $existente = Profissional::where('email', $request->email)->first();
-            if ($existente) {
-                return response()->json([
-                    'mensagem' => 'Outro profissional já possui esse email',
-                    'status' => 400
-                ], 400);
-            }
-            $profissional->cpf = $request->cpf;
-        }
-
-
-
-
-        // Atualiza o avatar, se enviado
-        if ($request->hasFile('file')) {
-            $avatar = $this->salvarAvatarProfissional($request);
-            if (!$avatar) {
-                return response()->json([
-                    'mensagem' => 'Erro ao salvar o avatar',
-                    'status' => 400
-                ], 400);
-            }
-            $profissional->fk_anexo = $avatar->id;
-        }
-
-        // Atualiza campos individuais se presentes
-        $profissional->nome = $request->filled('nome') ? $request->nome : $profissional->nome;
-        $profissional->email = $request->filled('email') ? $request->email : $profissional->email;
-        $profissional->data_nascimento = $request->filled('data_nascimento') ? $request->data_nascimento : $profissional->data_nascimento;
-        $profissional->especialidade = $request->filled('especialidade') ? $request->especialidade : $profissional->especialidade;
-
-        $profissional->save();
-
-        $data = [
-            'profissional' => $profissional,
-            'avatar' => $profissional->fk_anexo ? route('profissional.avatar', ['id' => $profissional->fk_anexo]) : null,
-            'mensagem' => 'Profissional atualizado com sucesso'
-        ];
-
-    } catch (\Exception $e) {
         return response()->json([
-            'mensagem' => 'Erro ao atualizar o profissional',
-            'status' => 500,
-            'error' => $e->getMessage()
-        ], 500);
+            'data' => $profissionais->items(),
+            'total' => $profissionais->total(),
+            'perPage' => $profissionais->perPage(),
+            'currentPage' => $profissionais->currentPage(),
+            'lastPage' => $profissionais->lastPage(),
+        ]);
     }
 
-    return response()->json($data, $status);
-}
+
+
+    public function update(Request $request, $id)
+    {
+        $status = 200;
+
+        try {
+            $profissional = Profissional::find($id);
+            if (!$profissional) {
+                return response()->json([
+                    'mensagem' => 'Profissional não encontrado',
+                    'status' => 400
+                ], 404);
+            }
+
+            // Verifica se o CPF é enviado e é diferente do existente
+            if ($request->filled('cpf') && $profissional->cpf !== $request->cpf) {
+                $existente = Profissional::where('cpf', $request->cpf)->first();
+                if ($existente) {
+                    return response()->json([
+                        'mensagem' => 'Outro profissional já possui esse CPF',
+                        'status' => 400
+                    ], 400);
+                }
+                $profissional->cpf = $request->cpf;
+            }
 
 
 
-    
+
+            // Verifica se o CPF é enviado e é diferente do existente
+            if ($request->filled('email') && $profissional->email !== $request->email) {
+                $existente = Profissional::where('email', $request->email)->first();
+                if ($existente) {
+                    return response()->json([
+                        'mensagem' => 'Outro profissional já possui esse email',
+                        'status' => 400
+                    ], 400);
+                }
+                $profissional->email = $request->email;
+            }
+
+
+
+
+            // Atualiza o avatar, se enviado
+            if ($request->hasFile('file')) {
+                $avatar = $this->salvarAvatarProfissional($request);
+                if (!$avatar) {
+                    return response()->json([
+                        'mensagem' => 'Erro ao salvar o avatar',
+                        'status' => 400
+                    ], 400);
+                }
+                $profissional->fk_anexo = $avatar->id;
+            }
+
+            // Atualiza campos individuais se presentes
+            $profissional->nome = $request->filled('nome') ? $request->nome : $profissional->nome;
+            $profissional->email = $request->filled('email') ? $request->email : $profissional->email;
+            $profissional->data_nascimento = $request->filled('data_nascimento') ? $request->data_nascimento : $profissional->data_nascimento;
+            $profissional->especialidade = $request->filled('especialidade') ? $request->especialidade : $profissional->especialidade;
+
+            $profissional->save();
+
+            $data = [
+                'profissional' => $profissional,
+                'avatar' => $profissional->fk_anexo ? route('profissional.avatar', ['id' => $profissional->fk_anexo]) : null,
+                'mensagem' => 'Profissional atualizado com sucesso'
+            ];
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'mensagem' => 'Erro ao atualizar o profissional',
+                'status' => 500,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+        return response()->json($data, $status);
+    }
+
+    /**
+     * Remove the specified resource from storage using soft delete.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function softDelete($id)
+    {
+        $profissional = Profissional::find($id);
+
+        if ($profissional) {
+            $profissional->delete();
+            return response()->json(['message' => 'Profissional deleted successfully.'], 200);
+        } else {
+            return response()->json(['message' => 'Profissional not found.'], 400);
+        }
+    }
 
 
 }

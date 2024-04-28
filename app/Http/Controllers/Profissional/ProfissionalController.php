@@ -46,7 +46,13 @@ class ProfissionalController extends Controller
     }
 
 
-    
 
+    public function softDelete($id){
+            
+        return new JsonResponse($this->apiProfissionalManager->softDelete($id));
+    }
+
+    
+    
     
 }

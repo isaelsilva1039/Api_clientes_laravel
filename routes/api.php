@@ -106,6 +106,7 @@ Route::prefix('racca/profissional')->group(function(){
 
     Route::get('/all',[ ProfissionalController::class, 'buscarTodos']);
     Route::post('/atualizar/{id}',[ ProfissionalController::class, 'update']);
+    Route::delete('/delete/{id}',[ ProfissionalController::class, 'softDelete']);
     
     
 });
