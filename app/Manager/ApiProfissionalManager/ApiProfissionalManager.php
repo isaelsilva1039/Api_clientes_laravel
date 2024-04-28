@@ -186,7 +186,7 @@ public function update(Request $request, $id)
         if (!$profissional) {
             return response()->json([
                 'mensagem' => 'Profissional não encontrado',
-                'status' => 404
+                'status' => 400
             ], 404);
         }
 
@@ -202,14 +202,32 @@ public function update(Request $request, $id)
             $profissional->cpf = $request->cpf;
         }
 
+
+
+
+        // Verifica se o CPF é enviado e é diferente do existente
+        if ($request->filled('email') && $profissional->email !== $request->email) {
+            $existente = Profissional::where('email', $request->email)->first();
+            if ($existente) {
+                return response()->json([
+                    'mensagem' => 'Outro profissional já possui esse email',
+                    'status' => 400
+                ], 400);
+            }
+            $profissional->cpf = $request->cpf;
+        }
+
+
+
+
         // Atualiza o avatar, se enviado
         if ($request->hasFile('file')) {
             $avatar = $this->salvarAvatarProfissional($request);
             if (!$avatar) {
                 return response()->json([
                     'mensagem' => 'Erro ao salvar o avatar',
-                    'status' => 500
-                ], 500);
+                    'status' => 400
+                ], 400);
             }
             $profissional->fk_anexo = $avatar->id;
         }
