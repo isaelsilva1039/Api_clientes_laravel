@@ -105,7 +105,7 @@ Route::prefix('racca/profissional')->group(function(){
     Route::post('/novo',[ ProfissionalController::class, 'create']);
     Route::get('/avatar/{id}',[ ProfissionalController::class, 'avatar'])->name('profissional.avatar');
 
-    Route::get('/all',[ ProfissionalController::class, 'buscarTodos']);
+    Route::get('/all',[ ProfissionalController::class, 'buscarTodos'])->middleware('auth:sanctum');
     Route::post('/atualizar/{id}',[ ProfissionalController::class, 'update']);
     Route::delete('/delete/{id}',[ ProfissionalController::class, 'softDelete']);
     

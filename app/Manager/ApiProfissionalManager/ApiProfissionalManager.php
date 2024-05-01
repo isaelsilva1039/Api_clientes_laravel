@@ -1,17 +1,25 @@
 <?php
+
 namespace App\Manager\ApiProfissionalManager;
 
 use App\Http\Controllers\Controller;
 use App\Models\CadastroMembros\Anexo;
 use App\Models\Profissional;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ApiProfissionalManager extends Controller
 {
 
+    const USUARIO_ADMINISTRADOR = 1;
+
+    const USUARIO_PROFISSIONAL_SAUDE = 2;
+
+    const USUARIO_CLIENTE = 3;
 
     public function store(Request $request)
     {
@@ -50,12 +58,27 @@ class ApiProfissionalManager extends Controller
             $novoProfissional = Profissional::create($request->all() + ['fk_anexo' => $avatar->id ?? null]);
 
 
+            if ($novoProfissional) {
+                // Criação do usuário associado ao profissional
+                /** @var User $usuario */
+                $usuario = User::create([
+                    'name' => $novoProfissional->nome,
+                    'email' => $novoProfissional->email,
+                    'password' => bcrypt($novoProfissional->cpf),
+                    'tipo' => self::USUARIO_PROFISSIONAL_SAUDE
+                ]);
+
+                // Associação do usuário ao profissional se necessário
+                $novoProfissional->user_id = $usuario->id;
+                $novoProfissional->save();
+                DB::commit();
+            }
+
+
             $data = [
                 'profissional' => $novoProfissional,
-                'avatar' => route('profissional.avatar', ['id' => 1])
-
+                'avatar' => route('profissional.avatar', ['id' => 1]),
             ];
-
         } catch (\Exception $th) {
             throw $th;
         }
@@ -74,15 +97,15 @@ class ApiProfissionalManager extends Controller
     {
         $cpf = $request->cpf;
         $incluiDeletados = $request->boolean('inclui_deletados', false);
-    
+
         $query = Profissional::where('cpf', $cpf);
-    
+
         if ($incluiDeletados) {
             $query->withTrashed();
         }
-    
+
         $profissional = $query->first();
-    
+
         return $profissional;
     }
 
@@ -116,7 +139,6 @@ class ApiProfissionalManager extends Controller
 
 
         return $anexo;
-
     }
 
 
@@ -136,7 +158,6 @@ class ApiProfissionalManager extends Controller
             header('Content-Disposition: attachment; filename=' . $anexo->name);
 
             return readfile($url);
-
         } catch (\Throwable $e) {
             return $respon = ["Error" => $e->getMessage(), "status_code" => $status_code = 400];
         }
@@ -159,12 +180,15 @@ class ApiProfissionalManager extends Controller
             $query->where('especialidade', $especialidade);
         }
 
-      
-        if ($termo !== null ) {
+        if ($request->user()->tipo == self::USUARIO_PROFISSIONAL_SAUDE) {
+            $query->where('user_id', $request->user()->id);
+        }
+
+        if ($termo !== null) {
             $query->where(function ($q) use ($termo) {
                 $q->where('nome', 'like', "%{$termo}%")
-                ->orWhere('cpf', 'like', "%{$termo}%")
-                ->orWhere('email', 'like', "%{$termo}%");
+                    ->orWhere('cpf', 'like', "%{$termo}%")
+                    ->orWhere('email', 'like', "%{$termo}%");
             });
         }
 
@@ -261,7 +285,6 @@ class ApiProfissionalManager extends Controller
                 'avatar' => $profissional->fk_anexo ? route('profissional.avatar', ['id' => $profissional->fk_anexo]) : null,
                 'mensagem' => 'Profissional atualizado com sucesso'
             ];
-
         } catch (\Exception $e) {
             return response()->json([
                 'mensagem' => 'Erro ao atualizar o profissional',
@@ -290,8 +313,4 @@ class ApiProfissionalManager extends Controller
             return response()->json(['message' => 'Profissional not found.'], 400);
         }
     }
-
-
 }
-
-?>
