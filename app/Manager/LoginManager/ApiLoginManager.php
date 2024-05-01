@@ -27,7 +27,7 @@ class ApiLoginManager extends Controller{
                  $data = [
                     'mensagem' => 'E-mail e/ou senha incorreta',
                     'status' =>  'error',
-                    'status_code' => $status_code = 200
+                    'status_code' => $status_code = 400
                 ];
             }
                     
@@ -41,8 +41,8 @@ class ApiLoginManager extends Controller{
                 ];
         
         } catch (\Throwable $th) {
-            $data['mensagem'] = $th->getMessage();
-            $data['code'] = $th->getCode();
+            $data['mensagem'] = 'Email ou senha errado';
+            $data['status_code'] =  500;
            
         }
 

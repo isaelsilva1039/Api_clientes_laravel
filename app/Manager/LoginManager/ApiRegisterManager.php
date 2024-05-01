@@ -19,7 +19,7 @@ class ApiRegisterManager extends Controller{
         
         try {
             $status_code = 200;
-            $userData = $request->only('name', 'email', 'password');
+            $userData = $request->only('name', 'email', 'password' , 'tipo', 'cpf');
             $userData['password'] = bcrypt($userData['password']);
 
             if(!$user = $user->create($userData))
