@@ -112,6 +112,6 @@ Route::prefix('racca/profissional')->group(function(){
     // Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
 });
 
-Route::post('/racca/horarios/create/horario', [ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
+Route::get('/racca/horarios/create/horario', [ApiHorarioSemanalController::class, 'create']);
 
 

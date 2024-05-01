@@ -19,15 +19,15 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // 'allowed_origins' => ['*'],
+    'allowed_origins' => ['*'],
 
-    'allowed_origins' => [
-        '*',
-        'http://localhost:3000',
-        'http://localhost:8000',
+    // 'allowed_origins' => [
+    //     '*',
+    //     'http://localhost:3000',
+    //     'http://localhost:8000',
         
-        'http://plataforma-racca.com.br'
-    ], // Substitua pela URL exata do seu cliente
+    //     'http://plataforma-racca.com.br'
+    // ], // Substitua pela URL exata do seu cliente
 
 
     'allowed_origins_patterns' => [],
