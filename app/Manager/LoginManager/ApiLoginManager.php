@@ -37,7 +37,9 @@ class ApiLoginManager extends Controller{
              $data = [
                     'token' => $token->plainTextToken,
                     'user' => auth()->user(),
+                    'avatar' => route('profissional.avatar', ['id' => auth()->user()->fk_anexo]),
                     'status_code' => $status_code = 200
+                    
                 ];
         
         } catch (\Throwable $th) {

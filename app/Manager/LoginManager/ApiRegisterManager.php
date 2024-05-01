@@ -2,6 +2,8 @@
 namespace App\Manager\LoginManager;
 
 use App\Http\Controllers\Controller;
+use App\Manager\ApiProfissionalManager\ApiProfissionalManager;
+use App\Models\CadastroMembros\Anexo;
 use App\Models\Ocorencia\Veiculo;
 use App\Models\User;
 use Illuminate\Foundation\Auth\User as AuthUser;
@@ -13,18 +15,30 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ApiRegisterManager extends Controller{
 
+    public $apiProfissionalManager;
 
+    public function __construct(ApiProfissionalManager $apiProfissionalManager) {
+        $this->apiProfissionalManager = $apiProfissionalManager;
+    }
     // micros serviços para usar em qual quer controler   
     public function registrarUsuario(Request $request, User $user){
         
         try {
             $status_code = 200;
             $userData = $request->only('name', 'email', 'password' , 'tipo', 'cpf');
+
+
+            /** @var Anexo $avatar */
+            $avatar = $this->apiProfissionalManager->salvarAvatarProfissional($request);
+
+            
+
             $userData['password'] = bcrypt($userData['password']);
 
-            if(!$user = $user->create($userData))
+            if(!$user = $user->create($userData + ['fk_anexo' => $avatar->id ?? null]))
                 abort(500, 'Erro ao criar Usuario');
 
+         
             $data = [
                 'result' => [
                     'user' => $user,

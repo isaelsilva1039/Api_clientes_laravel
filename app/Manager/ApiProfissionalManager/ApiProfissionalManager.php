@@ -65,7 +65,8 @@ class ApiProfissionalManager extends Controller
                     'name' => $novoProfissional->nome,
                     'email' => $novoProfissional->email,
                     'password' => bcrypt($novoProfissional->cpf),
-                    'tipo' => self::USUARIO_PROFISSIONAL_SAUDE
+                    'tipo' => self::USUARIO_PROFISSIONAL_SAUDE,
+                    'fk_anexo' => $avatar->id
                 ]);
 
                 // Associação do usuário ao profissional se necessário
@@ -77,7 +78,7 @@ class ApiProfissionalManager extends Controller
 
             $data = [
                 'profissional' => $novoProfissional,
-                'avatar' => route('profissional.avatar', ['id' => 1]),
+                'avatar' => route('profissional.avatar', ['id' => $avatar->id]),
             ];
         } catch (\Exception $th) {
             throw $th;
