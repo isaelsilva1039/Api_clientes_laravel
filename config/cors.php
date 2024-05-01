@@ -19,7 +19,16 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // 'allowed_origins' => ['*'],
+
+    'allowed_origins' => [
+        '*',
+        'http://localhost:3000',
+        'http://localhost:8000',
+        
+        'http://plataforma-racca.com.br'
+    ], // Substitua pela URL exata do seu cliente
+
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +38,7 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true, // Mudar para true se você precisa enviar cookies ou cabeçalhos de autenticação
+
 
 ];
