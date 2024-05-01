@@ -2,6 +2,7 @@
 
 
 use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
+use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController;
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Groups\ApiGroupsController;
@@ -108,7 +109,7 @@ Route::prefix('racca/profissional')->group(function(){
     Route::post('/atualizar/{id}',[ ProfissionalController::class, 'update']);
     Route::delete('/delete/{id}',[ ProfissionalController::class, 'softDelete']);
     
-    
+    Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
 });
 
 
