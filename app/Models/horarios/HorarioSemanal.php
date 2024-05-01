@@ -12,14 +12,18 @@ class HorarioSemanal extends Model
     use HasFactory;
 
 
-    protected $table = 'horarios_semanais';
+    protected $table = 'horarios_semanais'; 
 
     protected $fillable = [
-        'usuario_id',
-        'dia_da_semana',
-        'hora_inicio',
-        'hora_fim'
+        'id',
+        'user_id',
+        'horarios',
     ];
+
+    protected $casts = [
+        'horarios' => 'array' // Isso garante que o Laravel trate o campo como JSON
+    ];
+
 
     /**
      * Relacionamento com o model User.
@@ -28,7 +32,7 @@ class HorarioSemanal extends Model
      */
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'usuario_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // Outros métodos úteis para o model podem ser definidos aqui

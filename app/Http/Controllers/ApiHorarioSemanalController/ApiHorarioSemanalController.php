@@ -21,6 +21,14 @@ class ApiHorarioSemanalController extends Controller
 
 
     public function create(Request $request) {
+        
         return new JsonResponse($this->apiHorariosManager->store($request)); 
     }
+
+    public function action(Request $request) {
+        
+        return new JsonResponse($this->apiHorariosManager->action($request)); 
+    }
+
+    
 }
