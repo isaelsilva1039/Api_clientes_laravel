@@ -25,7 +25,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-       $token = $this->apiLoginManager->loginUsuario($request);  
+       $token = $this->apiLoginManager->loginUsuario($request);
        return new JsonResponse($token);      
     }
 }

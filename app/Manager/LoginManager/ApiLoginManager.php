@@ -27,7 +27,7 @@ class ApiLoginManager extends Controller{
                  $data = [
                     'mensagem' => 'E-mail e/ou senha incorreta',
                     'status' =>  'error',
-                    'status_code' => $status_code = 400
+                    'status_code' => $status_code = 200
                 ];
             }
                     
@@ -37,7 +37,7 @@ class ApiLoginManager extends Controller{
              $data = [
                     'token' => $token->plainTextToken,
                     'user' => auth()->user(),
-                    'avatar' => route('profissional.avatar', ['id' => auth()->user()->fk_anexo]),
+                    'avatar' => auth()->user()->fk_anexo ? route('profissional.avatar', ['id' => auth()->user()->fk_anexo]) : null,
                     'status_code' => $status_code = 200
                     
                 ];

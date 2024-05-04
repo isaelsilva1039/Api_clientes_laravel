@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\AgendamentoController\ApiAgendamentoController;
 use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
 use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController;
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
@@ -108,6 +108,13 @@ Route::prefix('racca/profissional')->group(function(){
     Route::get('/all',[ ProfissionalController::class, 'buscarTodos'])->middleware('auth:sanctum');
     Route::post('/atualizar/{id}',[ ProfissionalController::class, 'update']);
     Route::delete('/delete/{id}',[ ProfissionalController::class, 'softDelete']);
+    
+    // Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
+});
+
+
+Route::prefix('racca/agenda')->group(function(){
+    Route::post('/novo',[ ApiAgendamentoController::class, 'criarAgendamento']);
     
     // Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
 });
