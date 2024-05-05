@@ -122,6 +122,13 @@ Route::prefix('racca/agenda')->group(function(){
     Route::get('/agenda-cliente',[ ApiAgendamentoController::class, 'buscarAgendamentosCliente'])->middleware('auth:sanctum');
     
     Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum')->middleware('auth:sanctum');
+
+
+    Route::get('/agend-disponivel/{id}',[ ApiAgendamentoController::class, 'buscarHorariosDisponiveis'])->middleware('auth:sanctum');
+    
+
+
+    
 });
 
 Route::post('/racca/horarios/create/horario', [ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
