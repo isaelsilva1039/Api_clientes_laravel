@@ -108,15 +108,20 @@ Route::prefix('racca/profissional')->group(function(){
     Route::get('/all',[ ProfissionalController::class, 'buscarTodos'])->middleware('auth:sanctum');
     Route::post('/atualizar/{id}',[ ProfissionalController::class, 'update']);
     Route::delete('/delete/{id}',[ ProfissionalController::class, 'softDelete']);
+    Route::get('/todos',[ ProfissionalController::class, 'buscarProfissional'])->middleware('auth:sanctum');
+
+    Route::get('/horario/verificar',[ ApiAgendamentoController::class, 'verificarDisponibilidaDeEeHorario'])->middleware('auth:sanctum');
+    
     
     // Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
 });
 
 
 Route::prefix('racca/agenda')->group(function(){
-    Route::post('/novo',[ ApiAgendamentoController::class, 'criarAgendamento']);
+    Route::post('/novo',[ ApiAgendamentoController::class, 'criarAgendamento'])->middleware('auth:sanctum');
+    Route::get('/agenda-cliente',[ ApiAgendamentoController::class, 'buscarAgendamentosCliente'])->middleware('auth:sanctum');
     
-    // Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
+    Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum')->middleware('auth:sanctum');
 });
 
 Route::post('/racca/horarios/create/horario', [ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');

@@ -3,10 +3,12 @@ namespace App\Manager\ApiAsaasManager;
 
 use App\Http\Controllers\Controller;
 use App\Manager\ApiAsaasManager\DependentDTO\DependentDTO;
+use App\Manager\ApiProfissionalManager\ApiProfissionalManager;
 use App\Manager\CadastrosClientes\ApiManagerCadastro;
 use App\Models\CadastrosCliente\Cadastro;
 use App\Models\Dependente\Dependente;
 use App\Models\Igreja\Igreja;
+use App\Models\User;
 use Carbon\Carbon;
 use CodePhix\Asaas\Asaas;
 use Exception;
@@ -14,6 +16,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 
@@ -22,9 +25,9 @@ class ApiAsaasManager extends Controller
 
     // TODO: Remover essa chave daqui e levar para o env
     // ezeck
-    // const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTEwODU6OiRhYWNoXzE4MzNiYzc5LWVlZDYtNGNjNS1iMzQ5LWExMjZiNGRkYzlkZA==';
+    const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTEwODU6OiRhYWNoXzE4MzNiYzc5LWVlZDYtNGNjNS1iMzQ5LWExMjZiNGRkYzlkZA==';
     // prod
-     const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTIwNTY6OiRhYWNoXzZiOWFkNmE2LWViOGItNGUwMC1hZDAwLTY2ODU3YmRkYmIxMg==';
+    //  const CHAVE_API_ASSAS = '$aact_YTU5YTE0M2M2N2I4MTliNzk0YTI5N2U5MzdjNWZmNDQ6OjAwMDAwMDAwMDAwMDA0MTIwNTY6OiRhYWNoXzZiOWFkNmE2LWViOGItNGUwMC1hZDAwLTY2ODU3YmRkYmIxMg==';
 
     
 
@@ -117,6 +120,26 @@ class ApiAsaasManager extends Controller
             $cliente = $this->apiManagerCadastro->inserirNoBanco($dados, $id_cliente_assas, $productName);
 
             $this->createAssinatura($total, $id_cliente_assas);
+
+
+            if ($cliente) {
+                // Criação do usuário associado ao profissional
+                /** @var User $usuario */
+                $usuario = User::create([
+                    'name' => $cliente->name,
+                    'email' => $cliente->email,
+                    'password' => bcrypt(123),
+                    'tipo' => ApiProfissionalManager::USUARIO_CLIENTE,
+                    'fk_anexo' => null
+                ]);
+
+                // Associação do usuário ao profissional se necessário
+                $cliente->user_id = $usuario->id;
+                $cliente->save();
+                DB::commit();
+            }
+
+
 
             $dependentes = DependentDTO::fromRequest($lineItems);
             if ($dependentes) {

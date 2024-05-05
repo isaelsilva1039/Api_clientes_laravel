@@ -32,12 +32,13 @@ class Agendamento extends Model
         return $this->belongsTo(User::class, 'medico_id');
     }
 
+    
     /**
      * Retorna o usuário que é o cliente deste agendamento.
      */
     public function cliente()
     {
-        return $this->belongsTo(Cliente::class, 'cliente_id');
+        return $this->belongsTo(User::class, 'cliente_id');
     }
 }
 

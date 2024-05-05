@@ -24,7 +24,7 @@ class CreateAgendamentosTable extends Migration
         
             // Chaves estrangeiras
             $table->foreign('medico_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
+            $table->foreign('cliente_id')->references('id')->on('users')->onDelete('cascade');
         });
         
     }

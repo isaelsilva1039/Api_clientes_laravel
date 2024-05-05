@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\Agenda\Agendamento;
 use App\Models\CadastroMembros\Anexo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -51,4 +52,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Em App/Models/User.php
+    public function agendamentosComoCliente()
+    {
+        return $this->hasMany(Agendamento::class, 'cliente_id');
+    }
+
+
+  // No modelo User
+    public function agendamentosComoMedico()
+    {
+        return $this->hasMany(Agendamento::class, 'medico_id');
+    }
+
+
 }

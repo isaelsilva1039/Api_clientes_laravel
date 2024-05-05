@@ -53,6 +53,12 @@ class ProfissionalController extends Controller
     }
 
     
+    public function buscarProfissional(Request $request){
+            
+        return new JsonResponse($this->apiProfissionalManager->buscarProfissional($request));
+    }
+
+    
     
     
 }

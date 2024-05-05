@@ -314,4 +314,28 @@ class ApiProfissionalManager extends Controller
             return response()->json(['message' => 'Profissional not found.'], 400);
         }
     }
+
+
+
+    public function buscarProfissional(Request $request)
+    {
+        $profissionais = Profissional::with('anexo')->get();
+
+        // Transformando a coleção para adicionar o URL do avatar
+        $profissionaisTransformados = $profissionais->map(function ($profissional) {
+            return [
+                'id' => $profissional->id,
+                'user_id' => $profissional->user->id,
+                'nome' => $profissional->nome,
+                'email' => $profissional->email,
+                'especialidade' => $profissional->especialidade,
+                'avatarUrl' => $profissional->anexo ? route('profissional.avatar', ['id' => $profissional->anexo->id]) : null
+            ];
+        });
+
+        return response()->json([
+            'profissionais' => $profissionaisTransformados
+        ]);
+    }
+
 }
