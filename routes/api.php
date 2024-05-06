@@ -127,6 +127,10 @@ Route::prefix('racca/agenda')->group(function(){
     Route::get('/agend-disponivel/{id}',[ ApiAgendamentoController::class, 'buscarHorariosDisponiveis'])->middleware('auth:sanctum');
     
 
+    
+    Route::post('/create/liberar',[ ApiHorarioSemanalController::class, 'createAgenda'])->middleware('auth:sanctum');
+    
+    Route::get('/calendario/mes/{id}',[ ApiHorarioSemanalController::class, 'obterMesAgenda'])->middleware('auth:sanctum');
 
     
 });

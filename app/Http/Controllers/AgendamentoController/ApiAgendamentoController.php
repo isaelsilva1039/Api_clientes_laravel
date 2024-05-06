@@ -164,9 +164,6 @@ class ApiAgendamentoController extends Controller
     }
 
 
-
-
-
     public function buscarHorariosDisponiveis(Request $request, $id)
     {
 

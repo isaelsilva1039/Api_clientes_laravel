@@ -30,5 +30,19 @@ class ApiHorarioSemanalController extends Controller
         return new JsonResponse($this->apiHorariosManager->action($request)); 
     }
 
+
+
+    public function createAgenda(Request $request) {
+        
+        return new JsonResponse($this->apiHorariosManager->createAgenda($request)); 
+    }
+
+
+    public function obterMesAgenda(Request $request, $id) {
+        
+        return new JsonResponse($this->apiHorariosManager->obterMesAgenda($id ,$request)); 
+    }
+
+    
     
 }
