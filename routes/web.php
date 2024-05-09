@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+
+Route::prefix('cliente')->group(function(){
+    Route::get('/escala',[ApiControllerEscala::class, 'escalaAction']);
+    Route::get('/escala/{id}',[ApiControllerEscala::class, 'obetemEscalarPorId'])->middleware('auth:sanctum');
+    Route::put('/escala/{id}',[ApiControllerEscala::class, 'editarMedico'])->middleware('auth:sanctum');
+    Route::delete('/escala',[ApiControllerEscala::class, 'excluirEscala'])->middleware('auth:sanctum');
+    Route::post('/escala',[ApiControllerEscala::class, 'criarEscala'])->middleware('auth:sanctum');
+
 });
