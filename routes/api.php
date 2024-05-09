@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AgendamentoController\ApiAgendamentoController;
-use App\Http\Controllers\ApiControllerEscalas\ApiControllerEscala;
+
 use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController;
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
 use App\Http\Controllers\ClienteController;
@@ -53,15 +53,6 @@ Route::prefix('cliente')->group(function(){
 
 
 
-// -------------------------- CADASTRO DO CLIENTE AMARADO COM O USUARIO -----------------------------------------------------------
-Route::prefix('cliente')->group(function(){
-    Route::get('/escala',[ApiControllerEscala::class, 'escalaAction'])->middleware('auth:sanctum');
-    Route::get('/escala/{id}',[ApiControllerEscala::class, 'obetemEscalarPorId'])->middleware('auth:sanctum');
-    Route::put('/escala/{id}',[ApiControllerEscala::class, 'editarMedico'])->middleware('auth:sanctum');
-    Route::delete('/escala',[ApiControllerEscala::class, 'excluirEscala'])->middleware('auth:sanctum');
-    Route::post('/escala',[ApiControllerEscala::class, 'criarEscala'])->middleware('auth:sanctum');
-
-});
 
 
 Route::prefix('cliente')->group(function(){
