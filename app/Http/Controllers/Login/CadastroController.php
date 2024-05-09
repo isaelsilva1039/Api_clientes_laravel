@@ -36,5 +36,10 @@ class CadastroController extends Controller
         return new JsonResponse($data, $statusCode );
     }
 
+
+    public function a(Request $request)
+    {
+       return 'aaaa' ;
+    }
    
 }

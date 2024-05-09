@@ -48,6 +48,7 @@ Route::prefix('auth')->group(function(){
 // -------------------------- CADASTRO DO CLIENTE AMARADO COM O USUARIO -----------------------------------------------------------
 Route::prefix('cliente')->group(function(){
     Route::post('/cadastrar',[CadastroController::class, 'create'])->middleware('auth:sanctum');
+    Route::post('/a',[CadastroController::class, 'a']);
 });
 
 
