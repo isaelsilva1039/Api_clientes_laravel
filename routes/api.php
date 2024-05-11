@@ -6,11 +6,9 @@ use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Groups\ApiGroupsController;
-use App\Http\Controllers\Igreja\IgrejaController;
 use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\Login\RegisterController;
-use App\Http\Controllers\Ocorencia\VeiculoController;
 use App\Http\Controllers\Profissional\ProfissionalController;
 use App\Http\Controllers\Tipo\TipoController;
 use Illuminate\Http\Request;
