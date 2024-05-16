@@ -109,14 +109,18 @@ Route::prefix('racca/profissional')->group(function(){
 
 Route::prefix('racca/agenda')->group(function(){
     Route::post('/novo',[ ApiAgendamentoController::class, 'criarAgendamento'])->middleware('auth:sanctum');
+
+    Route::put('/atualizar/{id}',[ ApiAgendamentoController::class, 'atualizarAgendamento'])->middleware('auth:sanctum');
+
+
     Route::get('/agenda-cliente',[ ApiAgendamentoController::class, 'buscarAgendamentosCliente'])->middleware('auth:sanctum');
-    
+
+    Route::get('/agenda-cliente/{id}',[ ApiAgendamentoController::class, 'buscarEventoMedicoId'])->middleware('auth:sanctum');
+
     Route::post('/create/horario',[ ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum')->middleware('auth:sanctum');
 
 
     Route::get('/agend-disponivel/{id}',[ ApiAgendamentoController::class, 'buscarHorariosDisponiveis'])->middleware('auth:sanctum');
-    
-
     
     Route::post('/create/liberar',[ ApiHorarioSemanalController::class, 'createAgenda'])->middleware('auth:sanctum');
     

@@ -18,7 +18,7 @@ class ApiAgendamentoController extends Controller
         $clienteId = auth()->user()->id;
         $start_time = Carbon::parse($request->start_time);
         $end_time = Carbon::parse($request->end_time)->subMinute(); // Subtrai 1 minuto do término
-    
+
 
         // Verificar disponibilidade e sobreposição de horários
         $validacao = $this->validarHorario($medicoId, $start_time, $end_time);
@@ -37,6 +37,61 @@ class ApiAgendamentoController extends Controller
 
         return response()->json(['message' => 'Agendamento criado com sucesso!'], 201);
     }
+
+
+    public function atualizarAgendamento(Request $request, $id)
+    {
+        // Buscar o agendamento existente
+        $agendamento = Agendamento::find($id);
+        if (!$agendamento) {
+            return response()->json(['error' => 'Agendamento não encontrado.'], 404);
+        }
+    
+
+        // Atualizar medico_id se fornecido
+        if ($request->has('status') == 'remarcado' || $request->has('status') == 'cancelado' ) {
+            $agendamento->status = $request->status;
+
+            // Salva as alterações no agendamento
+            $agendamento->save();
+
+            return response()->json(['message' => 'Agendamento atualizado com sucesso!'], 200);
+
+        }
+            
+
+        // Verificar disponibilidade e sobreposição de horários apenas se os tempos forem fornecidos
+        if ($request->has('start_time') && $request->has('end_time')) {
+            $start_time = Carbon::parse($request->start_time);
+            $end_time = Carbon::parse($request->end_time)->subMinute(); // Subtrai 1 minuto do término
+    
+            $validacao = $this->validarHorario($agendamento->medico_id, $start_time, $end_time);
+            if ($validacao['erro']) {
+                return response()->json(['error' => $validacao['mensagem']], $validacao['status']);
+            }
+    
+            // Atualiza os horários no agendamento
+            $agendamento->start_time = $start_time;
+            $agendamento->end_time = $end_time;
+        }
+    
+        // Atualizar medico_id se fornecido
+        if ($request->has('medico_id')) {
+            $agendamento->medico_id = $request->medico_id;
+        }
+    
+      
+        // Atualizar cliente_id se fornecido
+        if ($request->has('cliente_id')) {
+            $agendamento->cliente_id = $request->cliente_id;
+        }
+    
+        // Salva as alterações no agendamento
+        $agendamento->save();
+    
+        return response()->json(['message' => 'Agendamento atualizado com sucesso!'], 200);
+    }
+    
 
 
 
@@ -61,53 +116,56 @@ class ApiAgendamentoController extends Controller
     {
         $user = auth()->user();
 
-        // Verifica se o usuário está logado e se é um cliente (tipo 3)
-        if ($user && $user->tipo == 3) {
-            $agendamentos = $user->agendamentosComoCliente()->with(['medico', 'cliente'])->get();
-
-
-            return response()->json([
-                'message' => 'Agendamentos encontrados com sucesso!',
-                'data' => $agendamentos
-            ], 200);
+        if (!$user) {
+            return response()->json(['error' => 'Usuário não autenticado.'], 403);
         }
 
+        // Prepara uma resposta base comum para todos os tipos de usuário
+        $baseQuery = Agendamento::with(['medico', 'cliente', 'medico.anexo', 'cliente.anexo'])
+        ->where('status', 'pendente');
 
-
-        // Verifica se o usuário está logado e se é um cliente (tipo 3)
-        if ($user && $user->tipo == 2) {
-            // Buscar todos os agendamentos onde o `medico_id` é igual ao ID do usuário
-            $agendamentos = Agendamento::with(['medico', 'cliente'])
-                ->where('medico_id', $user->id)
-                ->get();
-
-            return response()->json([
-                'message' => 'Agendamentos encontrados com sucesso!',
-                'data' => $agendamentos
-            ], 200);
+        if ($user->tipo == 3) { // Cliente
+            $agendamentos = $baseQuery->where('cliente_id', $user->id)->get();
+        } elseif ($user->tipo == 2) { // Médico
+            $agendamentos = $baseQuery->where('medico_id', $user->id)->get();
+        } elseif ($user->tipo == 1) { // Admin
+            $agendamentos = $baseQuery->get();
+        } else {
+            return response()->json(['error' => 'Usuário não autorizado ou não é um cliente.'], 403);
         }
 
+        // Adiciona a URL do avatar aos dados do médico e do cliente
+        $agendamentos->map(function ($agendamento) {
+            $agendamento->medico->avatar = $agendamento->medico->anexo ? route('profissional.avatar', ['id' => $agendamento->medico->fk_anexo]) : null;
+            $agendamento->cliente->avatar = $agendamento->cliente->anexo ? route('profissional.avatar', ['id' => $agendamento->cliente->fk_anexo]) : null;
+            return $agendamento;
+        });
 
-        // Verifica se o usuário está logado e se é um cliente (tipo 3)
-        if ($user && $user->tipo == 1) {
-            // Buscar todos os agendamentos onde o `medico_id` é igual ao ID do usuário
-            $agendamentos = Agendamento::with(['medico', 'cliente'])
-                // ->where('medico_id', $user->id)
-                ->get();
-
-            return response()->json([
-                'message' => 'Agendamentos encontrados com sucesso!',
-                'data' => $agendamentos
-            ], 200);
-        }
-
-        return response()->json(['error' => 'Usuário não autorizado ou não é um cliente.'], 403);
+        return response()->json([   
+            'message' => 'Agendamentos encontrados com sucesso!',
+            'data' => $agendamentos
+        ], 200);
     }
 
+
+    public function buscarEventoMedicoId($id)
+    {
+      
+ 
+        $agendamentos = Agendamento::with(['medico', 'cliente', 'medico.anexo', 'cliente.anexo'])
+        ->where('status', 'pendente')
+        ->where('medico_id', $id)->get();
+
+        return response()->json([   
+            'message' => 'Agendamentos encontrados com sucesso!',
+            'data' => $agendamentos
+        ], 200);
+    }
 
 
     public function validarHorario($medicoId, $start_time, $end_time)
     {
+
 
         $horariosMedico = HorarioSemanal::where('user_id', $medicoId)->first();
 
@@ -140,6 +198,7 @@ class ApiAgendamentoController extends Controller
         }
 
         $horarioLivre = Agendamento::where('medico_id', $medicoId)
+            ->whereNotIn('status', ['remarcado', 'cancelado'])
             ->where(function ($query) use ($start_time, $end_time) {
                 $query->whereBetween('start_time', [$start_time, $end_time])
                     ->orWhereBetween('end_time', [$start_time, $end_time]);
@@ -198,6 +257,7 @@ class ApiAgendamentoController extends Controller
         // Obter todos os agendamentos do médico para o dia
         $agendamentosOcupados = Agendamento::where('medico_id', $medicoId)
             ->whereDate('start_time', $dia)
+            ->whereNotIn('status', ['remarcado', 'cancelado'])
             ->get(['start_time', 'end_time']);
 
         // Gerar todos os horários disponíveis baseando-se nos horários do expediente
