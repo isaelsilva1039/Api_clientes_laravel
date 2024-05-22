@@ -49,15 +49,15 @@ class ApiAgendamentoController extends Controller
     
 
         // Atualizar medico_id se fornecido
-        if ($request->has('status') == 'remarcado' || $request->has('status') == 'cancelado' ) {
-            $agendamento->status = $request->status;
+        // if ($request->has('status') == 'remarcado' || $request->has('status') == 'cancelado' ) {
+        //     $agendamento->status = $request->status;
 
-            // Salva as alterações no agendamento
-            $agendamento->save();
+        //     // Salva as alterações no agendamento
+        //     $agendamento->save();
 
-            return response()->json(['message' => 'Agendamento atualizado com sucesso!'], 200);
+        //     return response()->json(['message' => 'Agendamento atualizado com sucesso!'], 200);
 
-        }
+        // }
             
 
         // Verificar disponibilidade e sobreposição de horários apenas se os tempos forem fornecidos
