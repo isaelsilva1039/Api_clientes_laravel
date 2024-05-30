@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\AgendamentoController\ApiAgendamentoController;
-
 use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController;
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\Dasboard\ApiDashboar;
 use App\Http\Controllers\Groups\ApiGroupsController;
 use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
@@ -40,6 +40,9 @@ Route::prefix('auth')->group(function(){
     Route::post('/register',[RegisterController::class, 'register']);
     Route::put('/editar',[RegisterController::class, 'editar'])->middleware('auth:sanctum');//edita usuario Logado
     Route::get('/usuario',[RegisterController::class, 'usuario'])->middleware('auth:sanctum');//dados usuario logado
+
+    Route::get('/me',[LoginController::class, 'me'])->middleware('auth:sanctum');
+    // me
         
 });
 
@@ -86,7 +89,10 @@ Route::prefix('igrejas')->group(function(){
 // ROTAS RACCA
 Route::prefix('racca')->group(function(){
     Route::post('/novo-cliente/webwook',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'indexCliente']);
-    
+    Route::get('/clientes',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'indexClienteAll'])->middleware('auth:sanctum');    
+
+    Route::post('/vincular/cliente/{id}',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'criarUserParaCliente']);
+    Route::post('/consultas/liberar/user/{id}',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'liberarConsultas']);
 });
 
 
@@ -133,3 +139,9 @@ Route::post('/racca/horarios/create/horario', [ApiHorarioSemanalController::clas
 Route::get('/racca/horarios/action/horario', [ApiHorarioSemanalController::class, 'action'])->middleware('auth:sanctum');
 
 
+
+Route::prefix('racca')->group(function(){
+    Route::get('/index',[ ApiDashboar::class, 'index'])->middleware('auth:sanctum');
+
+    
+});

@@ -6,11 +6,17 @@ namespace App\Models;
 
 use App\Models\Agenda\Agendamento;
 use App\Models\CadastroMembros\Anexo;
+use App\Models\Consultas\Consulta;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Cliente[] $clientes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Consultas\Consulta[] $consultas
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -66,5 +72,23 @@ class User extends Authenticatable
         return $this->hasMany(Agendamento::class, 'medico_id');
     }
 
+       /**
+     * Obtenha as consultas associadas ao usuário.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany  
+     */
+    public function consultas():HasMany
+    {
+        return $this->hasMany('App\Models\Consultas\Consulta', 'user_id', 'id');
+    }
+
+     /**
+     * Obtenha os clientes associados ao usuário.
+     */
+    
+    public function clientes()
+    {
+        return $this->hasMany('App\Models\Cliente');
+    }
 
 }

@@ -5,10 +5,13 @@ namespace App\Http\Controllers\AgendamentoController;
 
 use App\Http\Controllers\Controller;
 use App\Models\Agenda\Agendamento;
+use App\Models\Consultas\Consulta;
 use App\Models\horarios\HorarioSemanal;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+use function PHPUnit\Framework\isEmpty;
 
 class ApiAgendamentoController extends Controller
 {
@@ -49,15 +52,27 @@ class ApiAgendamentoController extends Controller
     
 
         // Atualizar medico_id se fornecido
-        // if ($request->has('status') == 'remarcado' || $request->has('status') == 'cancelado' ) {
-        //     $agendamento->status = $request->status;
+        if ($request->has('status') == 'realizado') {
+            $agendamento->status = $request->status;
 
-        //     // Salva as alterações no agendamento
-        //     $agendamento->save();
+            if ($request->status == 'realizado') {
+                // Encontrar a consulta relacionada ao cliente específico
+                $consultaRealizada = Consulta::where('user_id', $agendamento->cliente_id)->first();
 
-        //     return response()->json(['message' => 'Agendamento atualizado com sucesso!'], 200);
+                // Verifica se a consulta foi encontrada antes de tentar atualizar
+                if ($consultaRealizada) {
+                    // Incrementa a quantidade de consultas realizadas
+                    $consultaRealizada->quantidade_realizada += 1;
+     
+                    // Salva as alterações no banco de dados
+                    $consultaRealizada->save();
+                }
+            }
+            
+            // Salva as alterações no agendamento
+            $agendamento->save();
 
-        // }
+        }
             
 
         // Verificar disponibilidade e sobreposição de horários apenas se os tempos forem fornecidos
@@ -76,7 +91,7 @@ class ApiAgendamentoController extends Controller
         }
     
         // Atualizar medico_id se fornecido
-        if ($request->has('medico_id')) {
+        if ($request->has('medico_id') != null && $request->has('medico_id') > 1 ) {
             $agendamento->medico_id = $request->medico_id;
         }
     
@@ -122,7 +137,8 @@ class ApiAgendamentoController extends Controller
 
         // Prepara uma resposta base comum para todos os tipos de usuário
         $baseQuery = Agendamento::with(['medico', 'cliente', 'medico.anexo', 'cliente.anexo'])
-        ->where('status', 'pendente');
+        ->whereIn('status', ['pendente', 'remarcado']);
+
 
         if ($user->tipo == 3) { // Cliente
             $agendamentos = $baseQuery->where('cliente_id', $user->id)->get();
@@ -153,12 +169,12 @@ class ApiAgendamentoController extends Controller
       
  
         $agendamentos = Agendamento::with(['medico', 'cliente', 'medico.anexo', 'cliente.anexo'])
-        ->where('status', 'pendente')
+        ->whereIn('status', ['pendente', 'remarcado'])
         ->where('medico_id', $id)->get();
 
         return response()->json([   
             'message' => 'Agendamentos encontrados com sucesso!',
-            'data' => $agendamentos
+            'data' => $agendamentos ? $agendamentos : [],
         ], 200);
     }
 
@@ -257,7 +273,7 @@ class ApiAgendamentoController extends Controller
         // Obter todos os agendamentos do médico para o dia
         $agendamentosOcupados = Agendamento::where('medico_id', $medicoId)
             ->whereDate('start_time', $dia)
-            ->whereNotIn('status', ['remarcado', 'cancelado'])
+            ->whereNotIn('status', ['cancelado'])
             ->get(['start_time', 'end_time']);
 
         // Gerar todos os horários disponíveis baseando-se nos horários do expediente

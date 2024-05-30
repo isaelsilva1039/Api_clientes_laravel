@@ -28,4 +28,12 @@ class LoginController extends Controller
        $token = $this->apiLoginManager->loginUsuario($request);
        return new JsonResponse($token);      
     }
+
+
+
+    public function me(Request $request)
+    {
+       $token = $this->apiLoginManager->getMe($request);
+       return new JsonResponse($token);      
+    }
 }

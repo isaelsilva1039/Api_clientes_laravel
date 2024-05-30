@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Consultas\Consulta;
 use App\Models\Dependente\Dependente;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,7 @@ class Cliente extends Model
     'name',
     'email',
     'phone',
-    'mobilePhone','cpfCnpj',
+    'mobilePhone', 'cpfCnpj',
     'postalCode',
     'address',
     'addressNumber',
@@ -37,15 +38,22 @@ class Cliente extends Model
   ];
 
 
-     // Relação com Dependentes
-     public function dependentes()
-     {
-         return $this->hasMany(Dependente::class);
-     }
+  // Relação com Dependentes
+  public function dependentes()
+  {
+    return $this->hasMany(Dependente::class);
+  }
 
-     public function user()
-    {
-        return $this->belongsTo(\App\Models\User::class, 'user_id');
-    }
+  // Definindo a relação com User
+  public function user()
+  {
+    return $this->belongsTo('App\Models\User', 'user_id', 'id');
+  }
 
+
+  // Definição da relação com Consultas
+  public function consultas()
+  {
+    return $this->hasMany(Consulta::class, 'user_id');
+  }
 }
