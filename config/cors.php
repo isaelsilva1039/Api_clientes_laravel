@@ -7,7 +7,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        '*', // Pode usar '*' para permitir todas as origens ou especificar as URLs
+        '*',
         'http://localhost:3000',
         'http://localhost:8000',
         'https://app.racca.store',
@@ -23,6 +23,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true, // Defina como true se precisar enviar cookies ou cabeçalhos de autenticação
+    'supports_credentials' => true,
 ];
 

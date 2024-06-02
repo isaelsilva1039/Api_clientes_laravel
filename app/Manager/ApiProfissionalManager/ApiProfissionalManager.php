@@ -325,7 +325,7 @@ class ApiProfissionalManager extends Controller
         $profissionaisTransformados = $profissionais->map(function ($profissional) {
             return [
                 'id' => $profissional->id,
-                'user_id' => $profissional->user->id,
+                'user_id' => $profissional->user ?  $profissional->user->id : null ,
                 'nome' => $profissional->nome,
                 'email' => $profissional->email,
                 'especialidade' => $profissional->especialidade,
