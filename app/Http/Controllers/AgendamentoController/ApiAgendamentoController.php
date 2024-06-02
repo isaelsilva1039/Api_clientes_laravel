@@ -142,6 +142,7 @@ class ApiAgendamentoController extends Controller
 
         if ($user->tipo == 3) { // Cliente
             $agendamentos = $baseQuery->where('cliente_id', $user->id)->get();
+
         } elseif ($user->tipo == 2) { // Médico
             $agendamentos = $baseQuery->where('medico_id', $user->id)->get();
         } elseif ($user->tipo == 1) { // Admin
@@ -159,7 +160,8 @@ class ApiAgendamentoController extends Controller
 
         return response()->json([   
             'message' => 'Agendamentos encontrados com sucesso!',
-            'data' => $agendamentos
+            'data' => $agendamentos,
+            'count' => count($agendamentos)
         ], 200);
     }
 
