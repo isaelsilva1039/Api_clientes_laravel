@@ -22,7 +22,9 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\CorsMiddleware::class,
-        \Fruitcake\Cors\HandleCors::class,
+        // \Fruitcake\Cors\HandleCors::class,
+
+        \App\Http\Middleware\CorsMiddleware::class, // Se você criou um middleware CORS personalizado, deixe este
 
     ];
 

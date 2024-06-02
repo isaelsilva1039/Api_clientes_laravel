@@ -2,33 +2,17 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Cross-Origin Resource Sharing (CORS) Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure your settings for cross-origin resource sharing
-    | or "CORS". This determines what cross-origin operations may execute
-    | in web browsers. You are free to adjust these settings as needed.
-    |
-    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    |
-    */
-
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
-
-    // 'allowed_origins' => [
-    //     '*',
-    //     'http://localhost:3000',
-    //     'http://localhost:8000',
-        
-    //     'http://plataforma-racca.com.br'
-    // ], // Substitua pela URL exata do seu cliente
-
+    'allowed_origins' => [
+        '*', // Pode usar '*' para permitir todas as origens ou especificar as URLs
+        'http://localhost:3000',
+        'http://localhost:8000',
+        'https://app.racca.store',
+        'https://racca.store',
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -38,7 +22,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true, // Mudar para true se você precisa enviar cookies ou cabeçalhos de autenticação
-
-
+    'supports_credentials' => true, // Defina como true se precisar enviar cookies ou cabeçalhos de autenticação
 ];
+
