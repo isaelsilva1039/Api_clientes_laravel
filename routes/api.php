@@ -38,7 +38,7 @@ Route::prefix('auth')->group(function(){
     Route::post('/login',[LoginController::class, 'login']);
     Route::post('/logout',[LoginController::class, 'logout']);
     Route::post('/register',[RegisterController::class, 'register']);
-    Route::put('/editar',[RegisterController::class, 'editar'])->middleware('auth:sanctum');//edita usuario Logado
+    Route::post('/editar',[RegisterController::class, 'editar'])->middleware('auth:sanctum');//edita usuario Logado
     Route::get('/usuario',[RegisterController::class, 'usuario'])->middleware('auth:sanctum');//dados usuario logado
 
     Route::get('/me',[LoginController::class, 'me'])->middleware('auth:sanctum');

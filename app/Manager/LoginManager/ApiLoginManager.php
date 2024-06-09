@@ -58,6 +58,9 @@ class ApiLoginManager extends Controller{
         $user = Auth::user();
         
         /** @var User $user */
+
+
+        
         return [
             'user' => $user->makeHidden(['clientes', 'consultas']),
             'clientes' => $user->clientes()->get(),

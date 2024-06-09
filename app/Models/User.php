@@ -35,6 +35,10 @@ class User extends Authenticatable
         'fk_anexo'
     ];
 
+
+    // Adiciona o campo avatar aos atributos acessíveis no JSON
+    protected $appends = ['avatar'];
+    
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -90,5 +94,14 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\Cliente');
     }
+
+
+
+
+     // Define o accessor para o avatar
+     public function getAvatarAttribute()
+     {
+         return $this->fk_anexo ? route('profissional.avatar', ['id' => $this->fk_anexo]) : null;
+     }
 
 }

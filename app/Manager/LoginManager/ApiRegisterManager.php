@@ -31,7 +31,6 @@ class ApiRegisterManager extends Controller{
             /** @var Anexo $avatar */
             $avatar = $this->apiProfissionalManager->salvarAvatarProfissional($request);
 
-            
 
             $userData['password'] = bcrypt($userData['password']);
 
@@ -92,16 +91,35 @@ class ApiRegisterManager extends Controller{
         $usuario = $this->usuarioLogado($id);
         
         $requestJson = $request->all();
+        
+          // Atualizar os campos do usuário
+          $updateData = [];
+          if ($request->filled('name')) {
+              $updateData['name'] = $request->input('name');
+          }
+          if ($request->filled('email')) {
+              $updateData['email'] = $request->input('email');
+          }
+          if ($request->filled('cpf')) {
+              $updateData['cpf'] = $request->input('cpf');
+          }
+     
+          if ($request->filled('senha')) {
+              $updateData['password'] = bcrypt($request->input('senha'));
+          }
+    
+        $updateUsuario = $usuario->update($updateData);
 
-        if($requestJson == null){
-            return $data = [
-                'mensagem' => 'você precisa mandar pelo menos uma informação para essa api',
-                'status_code' => 400
-            ];
+       // Lidar com o upload de arquivo
+       if ($request->hasFile('file')) {
+            /** @var Anexo $avatar */
+            $avatar = $this->apiProfissionalManager->salvarAvatarProfissional($request);
+            $usuario->fk_anexo = $avatar->id; // Atualizar a chave estrangeira para o novo avatar
         }
         
-        $updateUsuario = $usuario->update($requestJson);
-        
+        // Salvar as mudanças no banco de dados
+        $usuario->save();
+
         $data = 
             [
                 "user " => $usuario,
