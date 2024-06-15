@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Agenda\Agendamento;
 use App\Models\Consultas\Consulta;
 use App\Models\horarios\HorarioSemanal;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -247,6 +248,9 @@ class ApiAgendamentoController extends Controller
         $medicoId = $id;
         $dia = Carbon::parse($request->input('dia'))->format('Y-m-d');
 
+
+        $usuario = User::find($medicoId);
+
         // Obter os horários do médico
         $horariosMedico = HorarioSemanal::where('user_id', $medicoId)->first();
         if (!$horariosMedico) {
@@ -283,7 +287,7 @@ class ApiAgendamentoController extends Controller
         foreach ($horariosDoDia as $periodo) {
             $startExpediente = Carbon::parse("$dia {$periodo['start']}");
             $endExpediente = Carbon::parse("$dia {$periodo['end']}");
-            $intervalo = 45; // intervalo de 45 minutos entre cada horário
+            $intervalo = $usuario->tempo_consulta ?  $usuario->tempo_consulta :  45; // intervalo de 45 minutos entre cada horário
 
             while ($startExpediente->addMinutes($intervalo)->lte($endExpediente)) {
                 $slotInicio = $startExpediente->clone()->subMinutes($intervalo);

@@ -5,6 +5,7 @@ namespace App\Manager\ApiHorariosManager;
 use App\Http\Controllers\Controller;
 use App\Models\horarios\HorarioSemanal;
 use App\Models\horarios\Mes;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -127,6 +128,17 @@ class ApiHorariosManager extends Controller
     }
     
 
+    public function updateTempoConsulta(Request $request)
+    {   
+        /** @var User $usuario */
+        $usuario =  Auth()->user();
 
+        $tempoConsulta = ($request->input('hora') * 60) + $request->input('minuto');
+
+        $usuario->tempo_consulta = $tempoConsulta;
+        $usuario->save();
+
+        return $usuario;
+    }
 
 }

@@ -93,6 +93,9 @@ Route::prefix('racca')->group(function(){
 
     Route::post('/vincular/cliente/{id}',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'criarUserParaCliente']);
     Route::post('/consultas/liberar/user/{id}',[\App\Http\Controllers\ApiAsaassController\ApiAsaasController ::class, 'liberarConsultas']);
+
+
+
 });
 
 
@@ -137,6 +140,7 @@ Route::prefix('racca/agenda')->group(function(){
 
 Route::post('/racca/horarios/create/horario', [ApiHorarioSemanalController::class, 'create'])->middleware('auth:sanctum');
 Route::get('/racca/horarios/action/horario', [ApiHorarioSemanalController::class, 'action'])->middleware('auth:sanctum');
+Route::post('/racca/horarios/create/tempo/consultas', [ApiHorarioSemanalController::class, 'updateTempoConsulta'])->middleware('auth:sanctum');
 
 
 
