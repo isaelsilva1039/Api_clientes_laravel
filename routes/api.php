@@ -5,6 +5,7 @@ use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Dasboard\ApiDashboar;
+use App\Http\Controllers\EspecialidadeController\ApiEspecialidadeController;
 use App\Http\Controllers\Groups\ApiGroupsController;
 use App\Http\Controllers\Login\CadastroController;
 use App\Http\Controllers\Login\LoginController;
@@ -146,6 +147,16 @@ Route::post('/racca/horarios/create/tempo/consultas', [ApiHorarioSemanalControll
 
 Route::prefix('racca')->group(function(){
     Route::get('/index',[ ApiDashboar::class, 'index'])->middleware('auth:sanctum');
+});
 
+
+Route::prefix('especialidades')->group(function(){
+    Route::post('/create',[ ApiEspecialidadeController::class, 'store'])->middleware('auth:sanctum');
+
+    Route::get('/index',[ ApiEspecialidadeController::class, 'index'])->middleware('auth:sanctum');
+
+
+    Route::put('/update/{id}',[ ApiEspecialidadeController::class, 'update'])->middleware('auth:sanctum');
     
+    Route::delete('/excluir/{id}',[ ApiEspecialidadeController::class, 'excluir'])->middleware('auth:sanctum');
 });
