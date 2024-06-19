@@ -105,4 +105,13 @@ class User extends Authenticatable
          return $this->fk_anexo ? route('profissional.avatar', ['id' => $this->fk_anexo]) : null;
      }
 
+
+     /**
+     * Get the professional associated with the user.
+     */
+    public function professional()
+    {
+        return $this->hasOne(Profissional::class, 'user_id');
+    }
+
 }

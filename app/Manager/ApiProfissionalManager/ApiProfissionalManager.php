@@ -55,7 +55,9 @@ class ApiProfissionalManager extends Controller
             }
 
             /** @var Profissional $novoProfissional */
-            $novoProfissional = Profissional::create($request->all() + ['fk_anexo' => $avatar->id ?? null]);
+            $novoProfissional = Profissional::create($request->all() + [
+                'fk_anexo' => $avatar->id ?? null,
+            ]);
 
 
             if ($novoProfissional) {
@@ -277,8 +279,11 @@ class ApiProfissionalManager extends Controller
             $profissional->nome = $request->filled('nome') ? $request->nome : $profissional->nome;
             $profissional->email = $request->filled('email') ? $request->email : $profissional->email;
             $profissional->data_nascimento = $request->filled('data_nascimento') ? $request->data_nascimento : $profissional->data_nascimento;
-            $profissional->especialidade = $request->filled('especialidade') ? $request->especialidade : $profissional->especialidade;
+            $profissional->fk_especialidade = $request->filled('fk_especialidade') ? $request->fk_especialidade : $profissional->fk_especialidade;
+            $profissional->link_sala = $request->filled('link_sala') ? $request->link_sala : $profissional->link_sala;
 
+            $profissional->especialidade = $request->filled('especialidade') ? $request->especialidade : $profissional->especialidade;
+            
             $profissional->save();
 
             $data = [
@@ -289,9 +294,9 @@ class ApiProfissionalManager extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'mensagem' => 'Erro ao atualizar o profissional',
-                'status' => 500,
+                'status' => 400,
                 'error' => $e->getMessage()
-            ], 500);
+            ], 400);
         }
 
         return response()->json($data, $status);
@@ -329,6 +334,7 @@ class ApiProfissionalManager extends Controller
                 'nome' => $profissional->nome,
                 'email' => $profissional->email,
                 'especialidade' => $profissional->especialidade,
+                'link_sala' => $profissional->link_sala,
                 'avatarUrl' => $profissional->anexo ? route('profissional.avatar', ['id' => $profissional->anexo->id]) : null
             ];
         });

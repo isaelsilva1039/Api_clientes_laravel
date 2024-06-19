@@ -46,6 +46,7 @@ class Agendamento extends Model
     {
         return $this->hasMany(Consulta::class);
     }
+    
 }
 
 

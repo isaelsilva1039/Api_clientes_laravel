@@ -22,7 +22,7 @@ class Profissional extends Model
      */
 
     protected $fillable = [
-        'nome', 'email', 'cpf', 'data_nascimento', 'especialidade', 'avatar' , 'fk_anexo','user_id', 'updated_at', 'created_at, deleted_at'
+        'nome', 'email', 'cpf', 'data_nascimento', 'especialidade', 'avatar' , 'fk_anexo','user_id', 'updated_at','fk_especialidade' , 'link_sala', 'created_at, deleted_at'
     ];
 
 
@@ -30,6 +30,12 @@ class Profissional extends Model
     {
         return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
+
+    public function especialidade()
+    {
+        return $this->belongsTo(Especialidade::class, 'fk_especialidade');
+    }
+
     public function anexo()
     {
         return $this->belongsTo(Anexo::class, 'fk_anexo');

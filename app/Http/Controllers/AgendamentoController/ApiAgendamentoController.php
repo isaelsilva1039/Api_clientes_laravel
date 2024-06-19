@@ -137,7 +137,15 @@ class ApiAgendamentoController extends Controller
         }
 
         // Prepara uma resposta base comum para todos os tipos de usuário
-        $baseQuery = Agendamento::with(['medico', 'cliente', 'medico.anexo', 'cliente.anexo'])
+        $baseQuery = Agendamento::with(
+            [
+                'medico',
+                'cliente',
+                'medico.anexo',
+                'cliente.anexo',
+                'medico.professional'
+
+            ])
         ->whereIn('status', ['pendente', 'remarcado']);
 
 
