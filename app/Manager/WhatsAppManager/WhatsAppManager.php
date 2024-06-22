@@ -3,65 +3,56 @@
 
 namespace App\Manager\WhatsAppManager;
 
+use App\Models\TwilioSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Twilio\Rest\Client;
+use Twilio\TwiML\MessagingResponse;
+
+
 
 class WhatsAppManager
 {
     protected $token;
     protected $phoneId;
+    protected $twilio;
 
     public function __construct()
     {
-        // aa
-    }
-    
+        $twilioSetting = TwilioSetting::first();
 
-    public function processMessage($data)
+        $this->twilio = new Client($twilioSetting->sid, $twilioSetting->token);
+    }
+
+    public function processMessage($request)
     {
-        // Lógica para processar a mensagem recebida
-        $message = $data['messages'][0]['text']['body'];
 
-        // Responder à mensagem
-        $response = $this->sendMessage($data['messages'][0]['from'], "Você disse: $message");
+            // Envia uma resposta automática
+            $response = new MessagingResponse();
+            $response->message('WebHookrespondendo de boas');
 
-        return $response;
+            return response($response, 200)->header('Content-Type', 'text/xml');
     }
 
-    public function sendMessage($to, $message)
+
+ 
+
+    public function sendMessage($phone, $message)
     {
-        $this->token = 'EAAFF9gS6WJUBOzdmYL9c1cchy3Ki1EmW4s7gEzs8RfI3cgzVhtnzHl2Gky6HSaNsEco4TDLJ7GLg5pDMVvLc6A8ljMZAC0RkGp1Qm52ukAa6kPmbPGxtsf8dZCCJZBKn1VzyLsD3JLZBzD0em4tNRHOZAZBbuqoBbzVuXkZCUIvCZBPaIBLjoq0vBN4ZCh7gWt1n912Q58JQmdYQgw842ZC30tBju1oc2VmhwAG4YZD';
-        $this->phoneId = '375669655620250';
+        
+        $from = "14155238886";
+        $to = '+559992292338';
+        $message = "Lá ele";
 
-        $url = "https://graph.facebook.com/v13.0/{$this->phoneId}/messages";
-
-        $response = Http::withToken($this->token)->post($url, [
-            'messaging_product' => 'whatsapp',
-            'to' => $to,
-            'type' => 'text',
-            'text' => ['body' => $message],
-        ]);
-
-        return $response->json();
+        return $this->twilio->messages->create(
+            "whatsapp:{$to}", // to
+            [
+                "from" => "whatsapp:{$from}",
+                "body" => $message
+            ]
+        );
     }
 
 
-    public function verify(Request $request)
-    {
-        $verifyToken = 'EAAFF9gS6WJUBOzdmYL9c1cchy3Ki1EmW4s7gEzs8RfI3cgzVhtnzHl2Gky6HSaNsEco4TDLJ7GLg5pDMVvLc6A8ljMZAC0RkGp1Qm52ukAa6kPmbPGxtsf8dZCCJZBKn1VzyLsD3JLZBzD0em4tNRHOZAZBbuqoBbzVuXkZCUIvCZBPaIBLjoq0vBN4ZCh7gWt1n912Q58JQmdYQgw842ZC30tBju1oc2VmhwAG4YZD';
 
-        $mode = $request->query('hub.mode');
-        $token = $request->query('hub.verify_token');
-        $challenge = $request->query('hub.challenge');
-
-        if ($mode && $token) {
-            if ($mode === 'subscribe' && $token === $verifyToken) {
-                return response($challenge, 200);
-            } else {
-                return response('Forbidden', 403);
-            }
-        }
-
-        return response('Bad Request', 400);
-    }
 }

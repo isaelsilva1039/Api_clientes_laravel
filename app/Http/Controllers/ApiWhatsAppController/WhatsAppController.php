@@ -21,7 +21,7 @@ class WhatsAppController extends Controller
         $data = $request->all();
 
         // Processar a mensagem recebida
-        $response = $this->whatsAppManager->processMessage($data);
+        $response = $this->whatsAppManager->processMessage($request);
 
         return response()->json($response);
     }
@@ -42,13 +42,6 @@ class WhatsAppController extends Controller
     }
 
 
-    public function verify(Request $request)
-    {
-        // Processar a mensagem recebida
-        $response = $this->whatsAppManager->verify($request);
-
-        return response()->json($response);
-    }
 
     
 }
