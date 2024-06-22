@@ -59,12 +59,12 @@ class WhatsAppManager
                 }
                 $conversation->status = 'cpf_received';
                 $conversation->save();
-                return '
-                    O que deseja fazer ? Digite o número da opção que deseja: 
-                    1. Agendar consulta 
-                    2. Ver suas consultas agendadas 
-                    3. Link da sala de chamada
-                    4. Finalizar';
+                return "O que deseja fazer? Digite o número da opção que deseja:\n"
+                . "1. Agendar consulta\n"
+                . "2. Ver suas consultas agendadas\n"
+                . "3. Link da sala de chamada\n"
+                . "4. Finalizar";
+        
             
             case 'cpf_received':
                 switch ($body) {
