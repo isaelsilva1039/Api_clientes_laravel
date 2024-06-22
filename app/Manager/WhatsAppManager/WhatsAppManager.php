@@ -5,6 +5,7 @@ namespace App\Manager\WhatsAppManager;
 
 use App\Models\Cliente;
 use App\Models\Conversation\Conversation;
+use App\Models\Profissional;
 use App\Models\TwilioSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -26,23 +27,22 @@ class WhatsAppManager
         $this->twilio = new Client($twilioSetting->sid, $twilioSetting->token);
     }
 
-    public function processMessage($request)
-    {   
+    public function processMessageAction($request)
+    {
         $from = $request->input('From'); // Número do remetente
         $body = $request->input('Body'); // Corpo da mensagem
 
         // Processar a mensagem recebida e obter a resposta
-        $responseMessage = $this->tomarDecisao($from, $body);
+        $responseMessage = $this->processMessage($from, $body);
 
 
         $this->sendMessage($to = '+559992292338', $responseMessage);
     }
 
 
- 
-    protected function tomarDecisao($from, $body)
+
+    protected function processMessage($from, $body)
     {
-        // Verificar se é a primeira mensagem
         $conversation = Conversation::firstOrCreate(
             ['phone_number' => $from],
             ['asked_for_cpf' => false, 'status' => 'initial']
@@ -50,59 +50,77 @@ class WhatsAppManager
 
         switch ($conversation->status) {
             case 'initial':
-                $conversation->status = 'waiting_for_cpf';
-                $conversation->save();
-                return 'Olá, seja bem-vindo ao agendamento Racca Saúde. Digite o seu CPF sem pontos e traços para continuarmos.';
-            
+                return $this->handleInitialMessage($conversation);
+
             case 'waiting_for_cpf':
-                if (!$this->isValidCPF($body)) {
-                    return 'Por favor, envie um CPF válido para continuar.';
-                }
-                $conversation->cpf = $body;
+                return $this->handleCpfMessage($conversation, $body);
 
-                $conversation->status = 'cpf_received';
-                $conversation->save();
-
-                $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
-
-                if(!$client){
-                    return "Esse CPF não foi encontrado na nossa base de dados";
-                }
-
-                return "Olá ". $client->name ."\n".
-                   "O que deseja fazer? Digite o número da opção que deseja:\n"
-                . "1. Agendar consulta\n"
-                . "2. Ver suas consultas agendadas\n"
-                . "3. Link da sala de chamada\n"
-                . "4. Finalizar";
-        
-            
             case 'cpf_received':
-                switch ($body) {
-                    case '1':
-                        // Lógica para agendar consulta
-                        return 'Você escolheu agendar uma consulta. Por favor, forneça mais detalhes...';
-                    case '2':
-                        // Lógica para ver consultas agendadas
-                        return 'Você escolheu ver suas consultas agendadas. Aqui estão seus agendamentos...';
-                    case '3':
-                        // Lógica para fornecer link da sala de chamada
-                        return 'Aqui está o link da sala de chamada: [link]';
-                    case '4':
-                        $conversation->delete();
-                        return 'Conversa finalizada. Se precisar de mais ajuda, envie uma nova mensagem.';
-                    default:
-                        return 'Opção inválida. Digite o número da opção que deseja: 1. Agendar consulta 2. Ver suas consultas agendadas 3. Link da sala de chamada';
-                }
+                return $this->handleOptionMessage($conversation, $body);
+
+            default:
+                return 'Erro desconhecido. Por favor, tente novamente.';
+        }
+    }
+
+    protected function handleInitialMessage($conversation)
+    {
+        $conversation->status = 'waiting_for_cpf';
+        $conversation->save();
+        return 'Olá, seja bem-vindo ao agendamento Racca Saúde. Digite o seu CPF sem pontos e traços para continuarmos.';
+    }
+
+    protected function handleCpfMessage($conversation, $body)
+    {
+        if (!$this->isValidCPF($body)) {
+            return 'Por favor, envie um CPF válido para continuar.';
+        }
+
+        $conversation->cpf = $body;
+        $conversation->status = 'cpf_received';
+        $conversation->save();
+
+        $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
+
+        if (!$client) {
+            return "Esse CPF não foi encontrado na nossa base de dados.";
+        }
+
+        return "Olá, " . $client->name . "\n"
+            . "O que deseja fazer? Digite o número da opção que deseja:\n"
+            . "1. Agendar consulta\n"
+            . "2. Ver suas consultas agendadas\n"
+            . "3. Link da sala de chamada\n"
+            . "4. Finalizar";
+    }
+
+    protected function handleOptionMessage($conversation, $body)
+    {
+        switch ($body) {
+            case '1':
+                return $this->sendInteractiveMessage($conversation);
+            case '2':
+                return 'Você escolheu ver suas consultas agendadas. Aqui estão seus agendamentos...';
+            case '3':
+                return 'Aqui está o link da sala de chamada: [link]';
+            case '4':
+                $conversation->delete();
+                return 'Conversa finalizada. Se precisar de mais ajuda, envie uma nova mensagem.';
+            default:
+                return "Opção inválida. Digite o número da opção que deseja:\n"
+                    . "1. Agendar consulta\n"
+                    . "2. Ver suas consultas agendadas\n"
+                    . "3. Link da sala de chamada\n"
+                    . "4. Finalizar";
         }
     }
 
 
     public function sendMessage($to = '+559992292338', $message = 'Lá ele')
     {
-        
+
         $from = "14155238886";
-        
+
         return $this->twilio->messages->create(
             "whatsapp:{$to}", // to
             [
@@ -111,7 +129,6 @@ class WhatsAppManager
             ]
         );
     }
-
 
     protected function isValidCPF($cpf)
     {
@@ -146,4 +163,34 @@ class WhatsAppManager
     }
 
 
+    protected function sendInteractiveMessage($conversation)
+    {
+        $profissionais = Profissional::all();
+        $buttons = [];
+
+        foreach ($profissionais as $profissional) {
+            $buttons[] = [
+                'type' => 'reply',
+                'reply' => [
+                    'id' => 'prof_' . $profissional->id,
+                    'title' => $profissional->name
+                ]
+            ];
+        }
+
+        $twilioMessage = [
+            'type' => 'interactive',
+            'interactive' => [
+                'type' => 'button',
+                'body' => [
+                    'text' => 'Escolha um profissional:'
+                ],
+                'action' => [
+                    'buttons' => $buttons
+                ]
+            ]
+        ];
+
+        return json_encode($twilioMessage);
+    }
 }
