@@ -165,14 +165,15 @@ class WhatsAppManager
 
     protected function handleAgendarConsulta()
     {
-        $profissionais = Profissional::all();
-        $nomesProfissionais = $profissionais->pluck('name');
+        // Filtrar apenas os profissionais que têm um user_id
+        $profissionais = Profissional::whereNotNull('user_id')->get();
         $response = "Você escolheu agendar uma consulta. Por favor, escolha um profissional:\n";
         
-        foreach ($profissionais as $nome) {
-            $response .= ('Matricula : ' . $profissionais->user_id) . ". " . $nome . "\n";
+        foreach ($profissionais as $profissional) {
+            $response .= "Matricula: " . $profissional->user_id . " - " . $profissional->name . "\n";
         }
-
+    
         return $response;
     }
+    
 }
