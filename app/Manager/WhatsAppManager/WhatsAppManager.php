@@ -78,13 +78,8 @@ class WhatsAppManager
                         // Lógica para fornecer link da sala de chamada
                         return 'Aqui está o link da sala de chamada: [link]';
                     case '4':
-                  
-                        $conversation = Conversation::firstOrCreate(
-                            ['phone_number' => $from],
-                            ['asked_for_cpf' => true, 'status' => 'waiting_for_cpf']
-                        );
-                        $conversation->save();
-                        return 'Finalizado';
+                        $conversation->delete();
+                        return 'Conversa finalizada. Se precisar de mais ajuda, envie uma nova mensagem.';
                     default:
                         return 'Opção inválida. Digite o número da opção que deseja: 1. Agendar consulta 2. Ver suas consultas agendadas 3. Link da sala de chamada';
                 }
