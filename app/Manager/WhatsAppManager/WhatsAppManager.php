@@ -15,6 +15,7 @@ class WhatsAppManager
     {
         // aa
     }
+    
 
     public function processMessage($data)
     {
