@@ -168,8 +168,5 @@ Route::prefix('especialidades')->group(function(){
 Route::prefix('webhook')->group(function(){
     Route::post('/whatsapp', [WhatsAppController::class, 'handleWebhook']);
     Route::post('/sendMensagaem', [WhatsAppController::class, 'sendMensagaem']);
-    Route::get('/whatsapp', [WhatsAppController::class, 'verify']);
-
-
-    
+ 
 });
