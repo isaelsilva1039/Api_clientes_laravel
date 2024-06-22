@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AgendamentoController\ApiAgendamentoController;
+
 use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController;
 use App\Http\Controllers\ApiMembros\ApiControllerMembros;
+use App\Http\Controllers\ApiWhatsAppController\WhatsAppController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Dasboard\ApiDashboar;
 use App\Http\Controllers\EspecialidadeController\ApiEspecialidadeController;
@@ -159,4 +161,13 @@ Route::prefix('especialidades')->group(function(){
     Route::put('/update/{id}',[ ApiEspecialidadeController::class, 'update'])->middleware('auth:sanctum');
     
     Route::delete('/excluir/{id}',[ ApiEspecialidadeController::class, 'excluir'])->middleware('auth:sanctum');
+});
+
+
+
+Route::prefix('webhook')->group(function(){
+    Route::post('/whatsapp', [WhatsAppController::class, 'handleWebhook']);
+    Route::post('/sendMensagaem', [WhatsAppController::class, 'sendMensagaem']);
+
+    
 });
