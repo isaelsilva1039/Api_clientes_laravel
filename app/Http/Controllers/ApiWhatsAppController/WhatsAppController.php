@@ -17,6 +17,7 @@ class WhatsAppController extends Controller
 
     public function handleWebhook(Request $request)
     {
+        return true;
         $data = $request->all();
 
         // Processar a mensagem recebida
