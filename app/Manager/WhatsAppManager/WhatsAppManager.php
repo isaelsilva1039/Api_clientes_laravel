@@ -170,7 +170,7 @@ class WhatsAppManager
         $response = "Você escolheu agendar uma consulta. Por favor, escolha um profissional:\n";
         
         foreach ($profissionais as $profissional) {
-            $response .= "Matricula: " . $profissional->user_id . " - " . $profissional->name . "\n";
+            $response .= "Matricula: " . $profissional->user_id . " - " . $profissional->nome . ' : ' . $profissional->especialidade . "\n";
         }
     
         return $response;
