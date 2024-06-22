@@ -45,8 +45,6 @@ class WhatsAppController extends Controller
     public function verify(Request $request)
     {
 
-        $request->to;
-
         // Processar a mensagem recebida
         $response = $this->whatsAppManager->verify($request);
 

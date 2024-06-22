@@ -3,7 +3,7 @@
 
 namespace App\Manager\WhatsAppManager;
 
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class WhatsAppManager
