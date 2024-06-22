@@ -81,7 +81,7 @@ class WhatsAppManager
                   
                         $conversation = Conversation::firstOrCreate(
                             ['phone_number' => $from],
-                            ['asked_for_cpf' => true, 'status' => 'initial']
+                            ['asked_for_cpf' => true, 'status' => 'waiting_for_cpf']
                         );
                         $conversation->save();
                         return 'Finalizado';
