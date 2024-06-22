@@ -98,7 +98,7 @@ class WhatsAppManager
     {
         switch ($body) {
             case '1':
-                return $this->sendInteractiveMessage($conversation);
+                return $this->handleAgendarConsulta();
             case '2':
                 return 'Você escolheu ver suas consultas agendadas. Aqui estão seus agendamentos...';
             case '3':
@@ -163,34 +163,16 @@ class WhatsAppManager
     }
 
 
-    protected function sendInteractiveMessage($conversation)
+    protected function handleAgendarConsulta()
     {
         $profissionais = Profissional::all();
-        $buttons = [];
-
-        foreach ($profissionais as $profissional) {
-            $buttons[] = [
-                'type' => 'reply',
-                'reply' => [
-                    'id' => 'prof_' . $profissional->id,
-                    'title' => $profissional->name
-                ]
-            ];
+        $nomesProfissionais = $profissionais->pluck('name');
+        $response = "Você escolheu agendar uma consulta. Por favor, escolha um profissional:\n";
+        
+        foreach ($profissionais as $nome) {
+            $response .= ('Matricula : ' . $profissionais->user_id) . ". " . $nome . "\n";
         }
 
-        $twilioMessage = [
-            'type' => 'interactive',
-            'interactive' => [
-                'type' => 'button',
-                'body' => [
-                    'text' => 'Escolha um profissional:'
-                ],
-                'action' => [
-                    'buttons' => $buttons
-                ]
-            ]
-        ];
-
-        return json_encode($twilioMessage);
+        return $response;
     }
 }
