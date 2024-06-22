@@ -3,6 +3,7 @@
 
 namespace App\Manager\WhatsAppManager;
 
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 class WhatsAppManager
@@ -41,5 +42,25 @@ class WhatsAppManager
         ]);
 
         return $response->json();
+    }
+
+
+    public function verify(Request $request)
+    {
+        $verifyToken = 'EAAFF9gS6WJUBOzdmYL9c1cchy3Ki1EmW4s7gEzs8RfI3cgzVhtnzHl2Gky6HSaNsEco4TDLJ7GLg5pDMVvLc6A8ljMZAC0RkGp1Qm52ukAa6kPmbPGxtsf8dZCCJZBKn1VzyLsD3JLZBzD0em4tNRHOZAZBbuqoBbzVuXkZCUIvCZBPaIBLjoq0vBN4ZCh7gWt1n912Q58JQmdYQgw842ZC30tBju1oc2VmhwAG4YZD';
+
+        $mode = $request->query('hub.mode');
+        $token = $request->query('hub.verify_token');
+        $challenge = $request->query('hub.challenge');
+
+        if ($mode && $token) {
+            if ($mode === 'subscribe' && $token === $verifyToken) {
+                return response($challenge, 200);
+            } else {
+                return response('Forbidden', 403);
+            }
+        }
+
+        return response('Bad Request', 400);
     }
 }
