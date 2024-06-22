@@ -19,7 +19,7 @@ class WhatsAppManager
 
     public function __construct()
     {
-        $twilioSetting = TwilioSetting::first();
+        $twilioSetting = TwilioSetting::find(1);
 
         $this->twilio = new Client($twilioSetting->sid, $twilioSetting->token);
     }
