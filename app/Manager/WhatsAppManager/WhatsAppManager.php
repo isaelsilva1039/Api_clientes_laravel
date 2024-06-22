@@ -83,7 +83,7 @@ class WhatsAppManager
                             ['phone_number' => $from],
                             ['asked_for_cpf' => false, 'status' => 'initial']
                         );
-
+                        $conversation->save();
                         return 'Finalizado';
                     default:
                         return 'Opção inválida. Digite o número da opção que deseja: 1. Agendar consulta 2. Ver suas consultas agendadas 3. Link da sala de chamada';
