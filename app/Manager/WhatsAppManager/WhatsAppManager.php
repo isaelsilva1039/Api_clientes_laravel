@@ -26,23 +26,23 @@ class WhatsAppManager
 
     public function processMessage($request)
     {
+        // Envia uma resposta automática
+        // $response = new MessagingResponse();
+        // $response->message('WebHookrespondendo de boas');
+        $this->sendMessage($to = '+559992292338', $message = 'O que queres ?');
 
-            // Envia uma resposta automática
-            $response = new MessagingResponse();
-            $response->message('WebHookrespondendo de boas');
-
-            return response($response, 200)->header('Content-Type', 'text/xml');
+        // return response($response, 200)->header('Content-Type', 'text/xml');
     }
 
 
  
 
-    public function sendMessage($phone, $message)
+    public function sendMessage($to = '+559992292338', $message = 'Lá ele')
     {
         
         $from = "14155238886";
-        $to = '+559992292338';
-        $message = "Lá ele";
+        
+
 
         return $this->twilio->messages->create(
             "whatsapp:{$to}", // to
