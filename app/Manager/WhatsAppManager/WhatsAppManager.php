@@ -3,6 +3,7 @@
 
 namespace App\Manager\WhatsAppManager;
 
+use App\Models\Cliente;
 use App\Models\Conversation\Conversation;
 use App\Models\TwilioSetting;
 use Illuminate\Http\Request;
@@ -57,9 +58,19 @@ class WhatsAppManager
                 if (!$this->isValidCPF($body)) {
                     return 'Por favor, envie um CPF válido para continuar.';
                 }
+                $conversation->cpf = $body;
+
                 $conversation->status = 'cpf_received';
                 $conversation->save();
-                return "O que deseja fazer? Digite o número da opção que deseja:\n"
+
+                $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
+
+                if(!$client){
+                    return "Esse CPF não foi encontrado na nossa base de dados";
+                }
+
+                return "Olá ". $client->name ."\n".
+                   "O que deseja fazer? Digite o número da opção que deseja:\n"
                 . "1. Agendar consulta\n"
                 . "2. Ver suas consultas agendadas\n"
                 . "3. Link da sala de chamada\n"
