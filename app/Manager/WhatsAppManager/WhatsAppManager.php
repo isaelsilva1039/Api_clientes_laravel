@@ -111,6 +111,8 @@ class WhatsAppManager
             case 'choosing_month':
                 return $this->handleChoosingMonth($conversation, $body);
 
+            case 'choosing_day':
+                return $this->handleChoosingDay($conversation, $body);
             default:
                 return 'Erro desconhecido. Por favor, tente novamente.';
         }
@@ -227,7 +229,7 @@ class WhatsAppManager
             $conversation->meta = $meta;
             $conversation->save();
 
-            return "Você escolheu o mês " . $selectedMonth->nome . ". Agora forneça mais detalhes para o agendamento.";
+            return "Você escolheu o mês " . $selectedMonth->mes . ". Agora forneça mais detalhes para o agendamento.";
         }
 
         return $this->listActiveMonths($conversation);
@@ -239,8 +241,7 @@ class WhatsAppManager
         $months = Mes::where('user_id', $professionalId)->where('isActive', 1)->get();
 
 
-        $response = "Escolha um mês para o agendamento: \n
-            \n OBS: **Esse profissional só tem esses mês liberado para agendamento** \n\n
+        $response = "Escolha um mês para o agendamento: \n OBS: **Esse profissional só tem esses mês liberado para agendamento** \n
         ";
 
         foreach ($months as $month) {
@@ -252,5 +253,45 @@ class WhatsAppManager
         return $response;
     }
 
-  
+
+    protected function handleChoosingDay($conversation, $body)
+    {
+        if ($body == '4') {
+            $conversation->delete();
+            return 'Conversa finalizada. Se precisar de mais ajuda, envie uma nova mensagem.';
+        }
+
+        $meta = $conversation->meta ?? [];
+        $selectedDay = (int)$body;
+        $currentMonth = $meta['month']['mes'];
+
+        if ($selectedDay < 1 || $selectedDay > date('t', strtotime("$currentMonth-01"))) {
+            return "Dia inválido. Por favor, escolha um dia válido:\n" . $this->listDaysInMonth($meta['month']);
+        }
+
+        $meta['day'] = $selectedDay;
+        $conversation->meta = $meta;
+        $conversation->save();
+
+        return "Você escolheu o dia " . $selectedDay . " do mês " . $currentMonth . ". Agora forneça mais detalhes para o agendamento.";
+    }
+
+
+    protected function listDaysInMonth($month)
+    {
+        $currentMonth = $month['mes'];
+        $currentYear = date('Y');
+        $daysInMonth = date('t', strtotime("$currentYear-$currentMonth-01"));
+        $currentDay = date('j');
+
+        $response = "Escolha um dia para o agendamento:\n";
+
+        for ($day = $currentDay; $day <= $daysInMonth; $day++) {
+            $response .= $day . "\n";
+        }
+
+        $response .= "Digite o número correspondente ao dia escolhido ou 4 para finalizar.";
+
+        return $response;
+    }
 }
