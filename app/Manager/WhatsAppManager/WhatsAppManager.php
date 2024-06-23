@@ -10,6 +10,7 @@ use App\Models\horarios\Mes;
 use App\Models\Profissional;
 use App\Models\TwilioSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Twilio\Rest\Client;
 
 
@@ -307,25 +308,39 @@ class WhatsAppManager
 
 
     protected function listAvailableTimes($conversation)
-    {
-        $meta = $conversation->meta;
-        $professionalId = $meta['professional']['user_id'];
-        $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
-        $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $professionalId);
+{
+    $meta = $conversation->meta;
+    $professionalId = $meta['professional']['user_id'];
+    $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
+    
+    // Log para inspecionar as variáveis
+    Log::info('Profissional ID:', ['professionalId' => $professionalId]);
+    Log::info('Data:', ['date' => $date]);
+    
+    $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $professionalId);
+    
+    // Log para inspecionar os horários disponíveis
+    Log::info('Horários Disponíveis:', ['availableTimes' => $availableTimes]);
 
-        $response = "Escolha um horário para o agendamento:\n";
+    $response = "Escolha um horário para o agendamento:\n";
 
-        foreach ($availableTimes as $time) {
-            if (is_array($time)) {
-                $time = implode(', ', $time);
-            }
-            $response .= $time . "\n";
+    foreach ($availableTimes as $time) {
+        // Log para inspecionar cada horário
+        Log::info('Horário:', ['time' => $time]);
+
+        if (is_array($time)) {
+            $time = implode(', ', $time);
         }
-
-        $response .= "Digite o horário escolhido no formato HH:MM ou 4 para finalizar.";
-
-        return $response;
+        $response .= $time . "\n";
     }
+
+    $response .= "Digite o horário escolhido no formato HH:MM ou 4 para finalizar.";
+
+    // Log para inspecionar a resposta final
+    Log::info('Resposta:', ['response' => $response]);
+
+    return $response;
+}
 
 
     protected function handleChoosingTime($conversation, $body)
