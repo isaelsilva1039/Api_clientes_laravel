@@ -9,6 +9,10 @@ class Conversation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['phone_number', 'asked_for_cpf', 'status', 'cpf'];
+    protected $fillable = ['phone_number', 'asked_for_cpf', 'status', 'meta'];
+
+        protected $casts = [
+        'meta' => 'array',
+    ];
 
 }
