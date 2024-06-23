@@ -33,4 +33,9 @@ class Mes extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('isActive', 1);
+    }
+
 }

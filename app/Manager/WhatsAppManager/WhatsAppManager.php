@@ -236,7 +236,7 @@ class WhatsAppManager
     protected function listActiveMonths($conversation)
     {
         $professionalId = $conversation->meta['professional']['user_id'];
-        $months = Mes::where('user_id', $professionalId)->active()->get();
+        $months = Mes::where('user_id', $professionalId)->where('isActive', 1);
 
         $response = "Escolha um mês para o agendamento:\n";
 
