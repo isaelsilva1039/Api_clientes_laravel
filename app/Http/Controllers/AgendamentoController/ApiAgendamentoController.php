@@ -391,9 +391,6 @@ class ApiAgendamentoController extends Controller
             }
         }
 
-        return response()->json([
-            'message' => 'Horários disponíveis encontrados com sucesso!',
-            'data' => $horariosDisponiveis
-        ], 200);
+        return $horariosDisponiveis;
     }
 }
