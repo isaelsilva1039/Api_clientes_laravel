@@ -321,4 +321,79 @@ class ApiAgendamentoController extends Controller
             'data' => $horariosDisponiveis
         ], 200);
     }
+
+
+
+
+    public function buscarHorariosDisponiveisParaBoot($mesAnoDia, $id)
+    {
+
+        $medicoId = $id;
+        $dia = Carbon::parse($mesAnoDia)->format('Y-m-d');
+
+
+        $usuario = User::find($medicoId);
+
+        // Obter os horários do médico
+        $horariosMedico = HorarioSemanal::where('user_id', $medicoId)->first();
+        if (!$horariosMedico) {
+            return response()->json(['error' => 'Horários do médico não encontrados.'], 500);
+        }
+
+        // Obter o nome do dia da semana em português
+        $mapaDias = [
+            'monday' => 'segunda',
+            'tuesday' => 'terca',
+            'wednesday' => 'quarta',
+            'thursday' => 'quinta',
+            'friday' => 'sexta',
+            'saturday' => 'sabado',
+            'sunday' => 'domingo'
+        ];
+        $diaDaSemanaIngles = strtolower(Carbon::parse($dia)->format('l'));
+        $diaDaSemana = $mapaDias[$diaDaSemanaIngles] ?? null;
+
+        if (!$diaDaSemana || !isset($horariosMedico->horarios[$diaDaSemana])) {
+            return response()->json(['error' => 'Não há horários disponíveis para este dia.'], 400);
+        }
+
+        $horariosDoDia = $horariosMedico->horarios[$diaDaSemana];
+
+        // Obter todos os agendamentos do médico para o dia
+        $agendamentosOcupados = Agendamento::where('medico_id', $medicoId)
+            ->whereDate('start_time', $dia)
+            ->whereNotIn('status', ['cancelado'])
+            ->get(['start_time', 'end_time']);
+
+        // Gerar todos os horários disponíveis baseando-se nos horários do expediente
+        $horariosDisponiveis = [];
+        foreach ($horariosDoDia as $periodo) {
+            $startExpediente = Carbon::parse("$dia {$periodo['start']}");
+            $endExpediente = Carbon::parse("$dia {$periodo['end']}");
+            $intervalo = $usuario->tempo_consulta ?  $usuario->tempo_consulta :  45; // intervalo de 45 minutos entre cada horário
+
+            while ($startExpediente->addMinutes($intervalo)->lte($endExpediente)) {
+                $slotInicio = $startExpediente->clone()->subMinutes($intervalo);
+                $slotFim = $startExpediente->clone();
+
+                // Verificar se o horário está ocupado
+                $ocupado = $agendamentosOcupados->contains(function ($agendamento) use ($slotInicio, $slotFim) {
+                    return ($agendamento->start_time < $slotFim && $agendamento->end_time > $slotInicio);
+                });
+
+                // Se não estiver ocupado, adiciona na lista de horários disponíveis
+                if (!$ocupado) {
+                    $horariosDisponiveis[] = [
+                        'inicio' => $slotInicio->format('H:i'),
+                        'fim' => $slotFim->format('H:i')
+                    ];
+                }
+            }
+        }
+
+        return response()->json([
+            'message' => 'Horários disponíveis encontrados com sucesso!',
+            'data' => $horariosDisponiveis
+        ], 200);
+    }
 }

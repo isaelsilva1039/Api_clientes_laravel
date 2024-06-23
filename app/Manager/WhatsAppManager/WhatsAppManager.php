@@ -3,6 +3,7 @@
 
 namespace App\Manager\WhatsAppManager;
 
+use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController;
 use App\Models\Cliente;
 use App\Models\Conversation\Conversation;
 use App\Models\horarios\Mes;
@@ -21,11 +22,15 @@ class WhatsAppManager
     protected $phoneId;
     protected $twilio;
 
-    public function __construct()
+    protected $apiAgendamento;
+
+    public function __construct(ApiHorarioSemanalController $apiAgendamento)
     {
         $twilioSetting = TwilioSetting::find(1);
 
         $this->twilio = new Client($twilioSetting->sid, $twilioSetting->token);
+
+        $this->apiAgendamento = $apiAgendamento;
     }
 
     public function sendMessage($to = '+559992292338', $message = 'Lá ele')
@@ -113,6 +118,10 @@ class WhatsAppManager
 
             case 'choosing_day':
                 return $this->handleChoosingDay($conversation, $body);
+        
+            case 'choosing_time':
+                return $this->handleChoosingTime($conversation, $body);
+            
             default:
                 return 'Erro desconhecido. Por favor, tente novamente.';
         }
@@ -294,5 +303,47 @@ class WhatsAppManager
         $response .= "Digite o número correspondente ao dia escolhido ou 4 para finalizar.";
 
         return $response;
+    }
+
+
+    protected function listAvailableTimes($conversation)
+    {
+        $meta = $conversation->meta;
+        $professionalId = $meta['professional']['user_id'];
+        $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
+        $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $professionalId);
+
+        $response = "Escolha um horário para o agendamento:\n";
+
+        foreach ($availableTimes as $time) {
+            $response .= $time . "\n";
+        }
+
+        $response .= "Digite o horário escolhido no formato HH:MM ou 4 para finalizar.";
+
+        return $response;
+    }
+
+    protected function handleChoosingTime($conversation, $body)
+    {
+        if ($body == '4') {
+            $conversation->delete();
+            return 'Conversa finalizada. Se precisar de mais ajuda, envie uma nova mensagem.';
+        }
+
+        $meta = $conversation->meta ?? [];
+        $selectedTime = $body;
+
+        // Validação básica do horário no formato HH:MM
+        if (!preg_match('/^\d{2}:\d{2}$/', $selectedTime)) {
+            return "Horário inválido. Por favor, escolha um horário válido no formato HH:MM:\n" . $this->listAvailableTimes($conversation);
+        }
+
+        $meta['time'] = $selectedTime;
+        $conversation->meta = $meta;
+        $conversation->save();
+
+        // Aqui você pode adicionar lógica adicional para finalizar o agendamento com as informações coletadas
+        return "Agendamento confirmado para " . $meta['day'] . "/" . $meta['month']['mes'] . " às " . $selectedTime . ". Obrigado!";
     }
 }
