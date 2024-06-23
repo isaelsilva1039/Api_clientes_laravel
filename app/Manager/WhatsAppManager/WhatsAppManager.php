@@ -329,7 +329,7 @@ class WhatsAppManager
         Log::info('Horário:', ['time' => $time]);
 
         if (is_array($time)) {
-            $time = implode(', ', $time);
+            $time = implode(' a ', $time);
         }
         $response .= $time . "\n";
     }
