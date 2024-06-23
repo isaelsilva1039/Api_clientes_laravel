@@ -393,4 +393,33 @@ class ApiAgendamentoController extends Controller
 
         return $horariosDisponiveis;
     }
+
+
+
+
+    public function criarAgendamentoComBoot($medicoId ,$start_time , $end_time)
+    {
+
+        $clienteId = auth()->user()->id;
+        $start_time = Carbon::parse($start_time);
+        $end_time = Carbon::parse($end_time)->subMinute(); // Subtrai 1 minuto do término
+
+
+        // Verificar disponibilidade e sobreposição de horários
+        $validacao = $this->validarHorario($medicoId, $start_time, $end_time);
+        if ($validacao['erro']) {
+            return 'Ecolha outro horário';
+        }
+
+
+        // Criar o agendamento
+        $agendamento = new Agendamento;
+        $agendamento->medico_id = $medicoId;
+        $agendamento->cliente_id = $clienteId;
+        $agendamento->start_time = $start_time;
+        $agendamento->end_time = $end_time;
+        $agendamento->save();
+
+        return $agendamento;
+    }
 }

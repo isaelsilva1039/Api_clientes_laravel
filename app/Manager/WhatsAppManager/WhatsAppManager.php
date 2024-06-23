@@ -9,6 +9,7 @@ use App\Models\Conversation\Conversation;
 use App\Models\horarios\Mes;
 use App\Models\Profissional;
 use App\Models\TwilioSetting;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Twilio\Rest\Client;
@@ -308,39 +309,39 @@ class WhatsAppManager
 
 
     protected function listAvailableTimes($conversation)
-{
-    $meta = $conversation->meta;
-    $professionalId = $meta['professional']['user_id'];
-    $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
-    
-    // Log para inspecionar as variáveis
-    Log::info('Profissional ID:', ['professionalId' => $professionalId]);
-    Log::info('Data:', ['date' => $date]);
-    
-    $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $professionalId);
-    
-    // Log para inspecionar os horários disponíveis
-    Log::info('Horários Disponíveis:', ['availableTimes' => $availableTimes]);
+    {
+        $meta = $conversation->meta;
+        $professionalId = $meta['professional']['user_id'];
+        $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
 
-    $response = "Escolha um horário para o agendamento:\n";
+        // Log para inspecionar as variáveis
+        Log::info('Profissional ID:', ['professionalId' => $professionalId]);
+        Log::info('Data:', ['date' => $date]);
 
-    foreach ($availableTimes as $time) {
-        // Log para inspecionar cada horário
-        Log::info('Horário:', ['time' => $time]);
+        $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $professionalId);
 
-        if (is_array($time)) {
-            $time = implode(' a ', $time);
+        // Log para inspecionar os horários disponíveis
+        Log::info('Horários Disponíveis:', ['availableTimes' => $availableTimes]);
+
+        $response = "Escolha um horário para o agendamento:\n";
+
+        foreach ($availableTimes as $time) {
+            // Log para inspecionar cada horário
+            Log::info('Horário:', ['time' => $time]);
+
+            if (is_array($time)) {
+                $time = implode(' a ', $time);
+            }
+            $response .= $time . "\n";
         }
-        $response .= $time . "\n";
+
+        $response .= "Digite o horário escolhido no formato HH:MM ou 4 para finalizar.";
+
+        // Log para inspecionar a resposta final
+        Log::info('Resposta:', ['response' => $response]);
+
+        return $response;
     }
-
-    $response .= "Digite o horário escolhido no formato HH:MM ou 4 para finalizar.";
-
-    // Log para inspecionar a resposta final
-    Log::info('Resposta:', ['response' => $response]);
-
-    return $response;
-}
 
 
     protected function handleChoosingTime($conversation, $body)
@@ -349,20 +350,33 @@ class WhatsAppManager
             $conversation->delete();
             return 'Conversa finalizada. Se precisar de mais ajuda, envie uma nova mensagem.';
         }
-
+    
         $meta = $conversation->meta ?? [];
         $selectedTime = $body;
-
+    
         // Validação básica do horário no formato HH:MM
         if (!preg_match('/^\d{2}:\d{2}$/', $selectedTime)) {
             return "Horário inválido. Por favor, escolha um horário válido no formato HH:MM:\n" . $this->listAvailableTimes($conversation);
         }
-
-        $meta['time'] = $selectedTime;
+    
+        // Formatar a data e horário para criar o agendamento
+        $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
+        $startTime = $date . ' ' . $selectedTime . ':00';
+        $endTime = Carbon::parse($startTime)->addMinutes(30)->format('Y-m-d H:i:s'); // Assumindo que a consulta dura 30 minutos
+    
+        // Criar o agendamento
+        $agendamento = $this->apiAgendamento->criarAgendamentoComBoot($meta['professional']['user_id'], $startTime, $endTime);
+    
+        if (is_string($agendamento)) {
+            return $agendamento; // Mensagem de erro da validação de horário
+        }
+    
+        // Atualizar a conversa com o agendamento criado
+        $meta['appointment'] = $agendamento->toArray();
         $conversation->meta = $meta;
         $conversation->save();
-
-        // Aqui você pode adicionar lógica adicional para finalizar o agendamento com as informações coletadas
-        return "Agendamento confirmado para " . $meta['day'] . "/" . $meta['month']['mes'] . " às " . $selectedTime . ". Obrigado!";
+    
+        return "Agendamento confirmado para " . Carbon::parse($startTime)->format('d/m/Y') . " às " . Carbon::parse($startTime)->format('H:i') . ". Obrigado!";
     }
+    
 }
