@@ -269,11 +269,14 @@ class WhatsAppManager
     protected function listActiveMonths($conversation)
     {
         $professionalId = $conversation->meta['professional']['user_id'];
-        $months = Mes::where('user_id', $professionalId)->where('isActive', 1)->get();
+        // Ordenar os meses pela coluna `value`
+        $months = Mes::where('user_id', $professionalId)
+            ->where('isActive', 1)
+            ->orderBy('value') // Supondo que `value` é a coluna a ser ordenada
+            ->get();
 
-
-        $response = "Escolha um mês para o agendamento: \n OBS: **Esse profissional só tem esses mês liberado para agendamento** \n
-        ";
+        $response = "Escolha um mês para o agendamento:\n";
+        $response .= "OBS: *Esse profissional só tem esses meses liberado para agendamento*\n\n";
 
         foreach ($months as $month) {
             $response .= $month->id . ". " . $month->mes . "\n";
