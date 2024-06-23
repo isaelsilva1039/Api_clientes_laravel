@@ -359,7 +359,7 @@ class WhatsAppManager
             // Log para inspecionar cada horário
             Log::info('Horário:', ['time' => $time]);
 
-            $timeString = $time['inicio'] . ' a ' . $time['fim']; // Ajustado para trabalhar com as chaves `inicio` e `fim`
+            $timeString = $time['inicio'] ; // Ajustado para trabalhar com as chaves `inicio` e `fim`
             $response .= $timeString . "\n";
         }
 
@@ -424,8 +424,13 @@ class WhatsAppManager
         // Criar o agendamento
         $agendamento = $this->apiAgendamento->criarAgendamentoComBoot($meta['professional']['user_id'], $startTime, $endTime, $clienteId);
     
+        $profidional_user_id = $meta['professional']['user_id'];
+
+
+        $profissional = Profissional::where('user_id', $profidional_user_id)->first();
+
         if (is_string($agendamento)) {
-            return $agendamento; // Mensagem de erro da validação de horário
+            return $agendamento;
         }
     
         // Atualizar a conversa com o agendamento criado
@@ -433,7 +438,12 @@ class WhatsAppManager
         $conversation->meta = $meta;
         $conversation->save();
     
-        return "Agendamento confirmado para " . Carbon::parse($startTime)->format('d/m/Y') . " às " . Carbon::parse($startTime)->format('H:i') . ". Obrigado!";
+        $conversation->delete();
+
+        $link_sala = $profissional->link_sala;
+        
+        return "Agendamento confirmado para " . Carbon::parse($startTime)->format('d/m/Y') . " às " . Carbon::parse($startTime)->format('H:i') . ".\nObrigado!\nLink da sala: " . $link_sala;
+
     }
     
 }
