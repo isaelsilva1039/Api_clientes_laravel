@@ -143,6 +143,21 @@ class WhatsAppManager
 
         $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
         
+
+        $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
+
+        // Log para inspecionar o objeto cliente recuperado
+        Log::info('Cliente recuperado:', ['client' => $client]);
+    
+        if (!$client) {
+            return "Esse CPF não foi encontrado na nossa base de dados.";
+        }
+    
+        if (!$client->user_id) {
+            return "O cliente não possui um usuario no racca associado.";
+        }
+
+
         $conversation->cpf = $body;
         $conversation->status = 'cpf_received';
         $meta['cliente_id'] = $client->user_id; // Adicionando o cliente_id ao meta
