@@ -281,9 +281,10 @@ class WhatsAppManager
 
         $meta['day'] = $selectedDay;
         $conversation->meta = $meta;
+        $conversation->status = 'choosing_time';
         $conversation->save();
 
-        return "Você escolheu o dia " . $selectedDay . " do mês " . $currentMonth . ". Agora forneça mais detalhes para o agendamento.";
+        return $this->listAvailableTimes($conversation);
     }
 
 
