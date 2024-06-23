@@ -3,16 +3,15 @@
 
 namespace App\Manager\WhatsAppManager;
 
-use App\Http\Controllers\ApiHorarioSemanalController\ApiHorarioSemanalController;
+use App\Http\Controllers\AgendamentoController\ApiAgendamentoController;
 use App\Models\Cliente;
 use App\Models\Conversation\Conversation;
 use App\Models\horarios\Mes;
 use App\Models\Profissional;
 use App\Models\TwilioSetting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Twilio\Rest\Client;
-use Twilio\TwiML\MessagingResponse;
+
 
 
 
@@ -24,13 +23,14 @@ class WhatsAppManager
 
     protected $apiAgendamento;
 
-    public function __construct(ApiHorarioSemanalController $apiAgendamento)
+    public function __construct(ApiAgendamentoController $apiAgendamento)
     {
         $twilioSetting = TwilioSetting::find(1);
 
         $this->twilio = new Client($twilioSetting->sid, $twilioSetting->token);
 
         $this->apiAgendamento = $apiAgendamento;
+
     }
 
     public function sendMessage($to = '+559992292338', $message = 'Lá ele')
