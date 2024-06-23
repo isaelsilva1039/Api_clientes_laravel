@@ -78,7 +78,7 @@ class WhatsAppManager
 
     public function handleWebhook(Request $request)
     {
-        $from = $request->input('From'); // Número do remetente
+        $from ='whatsapp:+559992292338'; // Número do remetente
         $body = $request->input('Body'); // Corpo da mensagem
 
         // Processar a mensagem recebida e obter a resposta
