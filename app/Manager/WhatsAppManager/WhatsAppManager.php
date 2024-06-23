@@ -108,6 +108,9 @@ class WhatsAppManager
             case 'choosing_professional':
                 return $this->handleChoosingProfessional($conversation, $body);
 
+            case 'choosing_month':
+                return $this->handleChoosingMonth($conversation, $body);
+
             default:
                 return 'Erro desconhecido. Por favor, tente novamente.';
         }
@@ -199,12 +202,11 @@ class WhatsAppManager
         $meta = $conversation->meta ?? [];
         $meta['professional'] = $profissional->toArray();
         $conversation->meta = $meta;
+        $conversation->status = 'choosing_month';
         $conversation->save();
 
-        return $this->handleChoosingMonth($conversation);
-
+        return $this->listActiveMonths($conversation);
     }
-
 
     protected function handleChoosingMonth($conversation, $body = null)
     {
