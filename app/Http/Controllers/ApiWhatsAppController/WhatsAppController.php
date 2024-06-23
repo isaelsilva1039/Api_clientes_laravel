@@ -32,8 +32,8 @@ class WhatsAppController extends Controller
 
         // Processar a mensagem recebida
         $response = $this->whatsAppManager->sendMessage(
-            $request->to,
-            $request->text
+            $request->phone,
+            $request->message
         );
 
         return response()->json($response);
