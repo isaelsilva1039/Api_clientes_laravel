@@ -227,9 +227,10 @@ class WhatsAppManager
 
             $meta['month'] = $selectedMonth->toArray();
             $conversation->meta = $meta;
+            $conversation->status = 'choosing_day';
             $conversation->save();
 
-            return "Você escolheu o mês " . $selectedMonth->mes . ". Agora forneça mais detalhes para o agendamento.";
+            return $this->listDaysInMonth($selectedMonth);
         }
 
         return $this->listActiveMonths($conversation);
