@@ -294,8 +294,10 @@ class WhatsAppManager
         $meta = $conversation->meta ?? [];
         $selectedDay = (int)$body;
         $currentMonth = $meta['month']['mes'];
+        $currentYear = date('Y'); // Adiciona o ano atual
 
-        if ($selectedDay < 1 || $selectedDay > date('t', strtotime("$currentMonth-01"))) {
+
+        if ($selectedDay < 1 || $selectedDay > date('t', strtotime("$currentYear-$currentMonth-01"))) {
             return "Dia inválido. Por favor, escolha um dia válido:\n" . $this->listDaysInMonth($meta['month']);
         }
 
