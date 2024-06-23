@@ -142,7 +142,7 @@ class WhatsAppManager
             return 'Por favor, envie um CPF válido para continuar.';
         }
 
-        $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
+        $client = Cliente::where('cpfCnpj', $body)->first();
         
 
         // Log para inspecionar o objeto cliente recuperado
