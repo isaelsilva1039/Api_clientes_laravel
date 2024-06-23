@@ -131,6 +131,7 @@ class WhatsAppManager
     protected function handleInitialMessage($conversation)
     {
         $conversation->status = 'waiting_for_cpf';
+        $conversation->cpf = 'conversation';
         $conversation->save();
         return 'Olá, seja bem-vindo ao agendamento Racca Saúde. Digite o seu CPF sem pontos e traços para continuarmos.';
     }
@@ -143,8 +144,6 @@ class WhatsAppManager
 
         $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
         
-
-        $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
 
         // Log para inspecionar o objeto cliente recuperado
         Log::info('Cliente recuperado:', ['client' => $client]);
