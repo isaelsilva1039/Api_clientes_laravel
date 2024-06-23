@@ -368,10 +368,16 @@ class WhatsAppManager
     
         // Encontra o horário correspondente na lista de horários disponíveis
         $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $meta['professional']['user_id']);
-        $endTime = null;
     
+        // Log para inspecionar os horários disponíveis
+        Log::info('Horários Disponíveis:', ['availableTimes' => $availableTimes]);
+    
+        $endTime = null;
         foreach ($availableTimes as $time) {
-            if (is_array($time) && $time[0] === $selectedTime) {
+            // Log para inspecionar cada horário
+            Log::info('Horário:', ['time' => $time]);
+    
+            if (is_array($time) && isset($time[0]) && $time[0] === $selectedTime) {
                 $endTime = $date . ' ' . $time[1] . ':00';
                 break;
             }
