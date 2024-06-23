@@ -318,7 +318,7 @@ class WhatsAppManager
 
     protected function listDaysInMonth($month)
     {
-        $currentMonth = $month['mes'];
+        $currentMonth =  $month['value'];
         $currentYear = date('Y');
         $daysInMonth = date('t', strtotime("$currentYear-$currentMonth-01"));
         $currentDay = date('j');
