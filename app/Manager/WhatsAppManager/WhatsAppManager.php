@@ -359,10 +359,11 @@ class WhatsAppManager
             // Log para inspecionar cada horário
             Log::info('Horário:', ['time' => $time]);
 
-            $timeString = $time['inicio'] ; // Ajustado para trabalhar com as chaves `inicio` e `fim`
+            $timeString = $time['inicio'] . ' a ' . $time['fim']; // Ajustado para trabalhar com as chaves `inicio` e `fim`
             $response .= $timeString . "\n";
         }
 
+        $response .= "OBS: Digite apenas o horário hinicial * Ex: 08:00 *\n\n";
         $response .= "Digite o horário de início escolhido no formato HH:MM ou 4 para finalizar.";
 
         // Log para inspecionar a resposta final
