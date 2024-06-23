@@ -255,6 +255,7 @@ class WhatsAppManager
             }
 
             $meta['month'] = $selectedMonth->toArray();
+            $meta['month_numeric'] = date('m', strtotime($selectedMonth->mes)); // Adiciona o mês em formato numérico
             $conversation->meta = $meta;
             $conversation->status = 'choosing_day';
             $conversation->save();
@@ -303,6 +304,7 @@ class WhatsAppManager
 
         $meta['day'] = $selectedDay;
         $meta['year'] = $currentYear; // Adiciona o ano ao meta
+        
         $conversation->meta = $meta;
         $conversation->status = 'choosing_time';
         $conversation->save();
@@ -334,7 +336,10 @@ class WhatsAppManager
     {
         $meta = $conversation->meta;
         $professionalId = $meta['professional']['user_id'];
-        $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
+        $year = $meta['year']; // Recupera o ano do meta
+        $month = $meta['month_numeric']; // Recupera o mês numérico do meta
+        $day = $meta['day']; // Recupera o dia do meta
+        $date = "$year-$month-$day"; // Forma a data completa
 
         // Log para inspecionar as variáveis
         Log::info('Profissional ID:', ['professionalId' => $professionalId]);
@@ -381,7 +386,7 @@ class WhatsAppManager
     
         // Formatar a data e horário para criar o agendamento
         $year = $meta['year']; // Recupera o ano do meta
-        $month = $meta['month']['mes']; // Recupera o mês do meta
+        $month = $meta['month_numeric']; // Recupera o mês numérico do meta
         $day = $meta['day']; // Recupera o dia do meta
         $date = "$year-$month-$day"; // Forma a data completa
     
