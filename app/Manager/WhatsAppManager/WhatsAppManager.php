@@ -313,35 +313,38 @@ class WhatsAppManager
         $meta = $conversation->meta;
         $professionalId = $meta['professional']['user_id'];
         $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
-
+    
         // Log para inspecionar as variáveis
         Log::info('Profissional ID:', ['professionalId' => $professionalId]);
         Log::info('Data:', ['date' => $date]);
-
+    
         $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $professionalId);
-
+    
         // Log para inspecionar os horários disponíveis
         Log::info('Horários Disponíveis:', ['availableTimes' => $availableTimes]);
-
+    
         $response = "Escolha um horário para o agendamento:\n";
-
+    
         foreach ($availableTimes as $time) {
             // Log para inspecionar cada horário
             Log::info('Horário:', ['time' => $time]);
-
+    
             if (is_array($time)) {
-                $time = implode(' a ', $time);
+                $timeString = $time[0] . ' a ' . $time[1]; // Assume que $time[0] é start e $time[1] é end
+            } else {
+                $timeString = $time;
             }
-            $response .= $time . "\n";
+            $response .= $timeString . "\n";
         }
-
-        $response .= "Digite o horário escolhido no formato HH:MM ou 4 para finalizar.";
-
+    
+        $response .= "Digite o horário de início escolhido no formato HH:MM ou 4 para finalizar.";
+    
         // Log para inspecionar a resposta final
         Log::info('Resposta:', ['response' => $response]);
-
+    
         return $response;
     }
+    
 
 
     protected function handleChoosingTime($conversation, $body)
@@ -362,7 +365,21 @@ class WhatsAppManager
         // Formatar a data e horário para criar o agendamento
         $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
         $startTime = $date . ' ' . $selectedTime . ':00';
-        $endTime = Carbon::parse($startTime)->addMinutes(30)->format('Y-m-d H:i:s'); // Assumindo que a consulta dura 30 minutos
+    
+        // Encontra o horário correspondente na lista de horários disponíveis
+        $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $meta['professional']['user_id']);
+        $endTime = null;
+    
+        foreach ($availableTimes as $time) {
+            if (is_array($time) && $time[0] === $selectedTime) {
+                $endTime = $date . ' ' . $time[1] . ':00';
+                break;
+            }
+        }
+    
+        if (!$endTime) {
+            return "Horário inválido. Por favor, escolha um horário válido:\n" . $this->listAvailableTimes($conversation);
+        }
     
         // Criar o agendamento
         $agendamento = $this->apiAgendamento->criarAgendamentoComBoot($meta['professional']['user_id'], $startTime, $endTime);
@@ -378,5 +395,6 @@ class WhatsAppManager
     
         return "Agendamento confirmado para " . Carbon::parse($startTime)->format('d/m/Y') . " às " . Carbon::parse($startTime)->format('H:i') . ". Obrigado!";
     }
+    
     
 }
