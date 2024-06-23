@@ -30,7 +30,6 @@ class WhatsAppManager
         $this->twilio = new Client($twilioSetting->sid, $twilioSetting->token);
 
         $this->apiAgendamento = $apiAgendamento;
-
     }
 
     public function sendMessage($to = '+559992292338', $message = 'Lá ele')
@@ -118,10 +117,10 @@ class WhatsAppManager
 
             case 'choosing_day':
                 return $this->handleChoosingDay($conversation, $body);
-        
+
             case 'choosing_time':
                 return $this->handleChoosingTime($conversation, $body);
-            
+
             default:
                 return 'Erro desconhecido. Por favor, tente novamente.';
         }
@@ -317,6 +316,9 @@ class WhatsAppManager
         $response = "Escolha um horário para o agendamento:\n";
 
         foreach ($availableTimes as $time) {
+            if (is_array($time)) {
+                $time = implode(', ', $time);
+            }
             $response .= $time . "\n";
         }
 
@@ -324,6 +326,7 @@ class WhatsAppManager
 
         return $response;
     }
+
 
     protected function handleChoosingTime($conversation, $body)
     {
