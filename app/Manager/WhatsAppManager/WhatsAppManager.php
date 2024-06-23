@@ -239,7 +239,9 @@ class WhatsAppManager
         $months = Mes::where('user_id', $professionalId)->where('isActive', 1)->get();
 
 
-        $response = "Escolha um mês para o agendamento: \n";
+        $response = "Escolha um mês para o agendamento: \n
+            \n OBS: **Esse profissional só tem esses mês liberado para agendamento** \n\n
+        ";
 
         foreach ($months as $month) {
             $response .= $month->id . ". " . $month->mes . "\n";
