@@ -397,10 +397,10 @@ class ApiAgendamentoController extends Controller
 
 
 
-    public function criarAgendamentoComBoot($medicoId ,$start_time , $end_time)
+    public function criarAgendamentoComBoot($medicoId ,$start_time , $end_time ,$clienteId)
     {
 
-        $clienteId = auth()->user()->id;
+        
         $start_time = Carbon::parse($start_time);
         $end_time = Carbon::parse($end_time)->subMinute(); // Subtrai 1 minuto do término
 

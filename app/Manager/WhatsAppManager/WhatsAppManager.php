@@ -141,11 +141,16 @@ class WhatsAppManager
             return 'Por favor, envie um CPF válido para continuar.';
         }
 
+        $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
+        
         $conversation->cpf = $body;
         $conversation->status = 'cpf_received';
+        $meta['cliente_id'] = $client->user_id; // Adicionando o cliente_id ao meta
+        $conversation->meta = $meta;
+
         $conversation->save();
 
-        $client = Cliente::where('cpfCnpj', $conversation->cpf)->first();
+   
 
         if (!$client) {
             return "Esse CPF não foi encontrado na nossa base de dados.";
@@ -313,34 +318,34 @@ class WhatsAppManager
         $meta = $conversation->meta;
         $professionalId = $meta['professional']['user_id'];
         $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
-    
+
         // Log para inspecionar as variáveis
         Log::info('Profissional ID:', ['professionalId' => $professionalId]);
         Log::info('Data:', ['date' => $date]);
-    
+
         $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $professionalId);
-    
+
         // Log para inspecionar os horários disponíveis
         Log::info('Horários Disponíveis:', ['availableTimes' => $availableTimes]);
-    
+
         $response = "Escolha um horário para o agendamento:\n";
-    
+
         foreach ($availableTimes as $time) {
             // Log para inspecionar cada horário
             Log::info('Horário:', ['time' => $time]);
-    
+
             $timeString = $time['inicio'] . ' a ' . $time['fim']; // Ajustado para trabalhar com as chaves `inicio` e `fim`
             $response .= $timeString . "\n";
         }
-    
+
         $response .= "Digite o horário de início escolhido no formato HH:MM ou 4 para finalizar.";
-    
+
         // Log para inspecionar a resposta final
         Log::info('Resposta:', ['response' => $response]);
-    
+
         return $response;
     }
-    
+
 
     protected function handleChoosingTime($conversation, $body)
     {
@@ -348,49 +353,57 @@ class WhatsAppManager
             $conversation->delete();
             return 'Conversa finalizada. Se precisar de mais ajuda, envie uma nova mensagem.';
         }
-    
+
         $meta = $conversation->meta ?? [];
         $selectedTime = $body;
-    
+
         // Validação básica do horário no formato HH:MM
         if (!preg_match('/^\d{2}:\d{2}$/', $selectedTime)) {
             return "Horário inválido. Por favor, escolha um horário válido no formato HH:MM:\n" . $this->listAvailableTimes($conversation);
         }
-    
+
         // Formatar a data e horário para criar o agendamento
         $date = date('Y-m-d', strtotime($meta['month']['mes'] . '-' . $meta['day']));
         $startTime = $date . ' ' . $selectedTime . ':00';
-    
+
         // Encontra o horário correspondente na lista de horários disponíveis
         $availableTimes = $this->apiAgendamento->buscarHorariosDisponiveisParaBoot($date, $meta['professional']['user_id']);
         $endTime = null;
-    
+
+        // Log para inspecionar a estrutura dos horários disponíveis
+        Log::info('Horários Disponíveis:', ['availableTimes' => $availableTimes]);
+
         foreach ($availableTimes as $time) {
+            Log::info('Analisando horário:', ['time' => $time]);
+
             if ($time['inicio'] === $selectedTime) {
                 $endTime = $date . ' ' . $time['fim'] . ':00';
                 break;
             }
         }
-    
+
+           // Recuperar o clienteId do meta
+            $clienteId = $meta['cliente_id'] ?? null;
+
         if (!$endTime) {
             return "Horário inválido. Por favor, escolha um horário válido:\n" . $this->listAvailableTimes($conversation);
         }
-    
+
+        // Log para inspecionar as variáveis de agendamento
+        Log::info('Agendamento:', ['professional_id' => $meta['professional']['user_id'], 'start_time' => $startTime, 'end_time' => $endTime]);
+
         // Criar o agendamento
-        $agendamento = $this->apiAgendamento->criarAgendamentoComBoot($meta['professional']['user_id'], $startTime, $endTime);
-    
+        $agendamento = $this->apiAgendamento->criarAgendamentoComBoot($meta['professional']['user_id'], $startTime, $endTime, $clienteId);
+
         if (is_string($agendamento)) {
             return $agendamento; // Mensagem de erro da validação de horário
         }
-    
+
         // Atualizar a conversa com o agendamento criado
         $meta['appointment'] = $agendamento->toArray();
         $conversation->meta = $meta;
         $conversation->save();
-    
+
         return "Agendamento confirmado para " . Carbon::parse($startTime)->format('d/m/Y') . " às " . Carbon::parse($startTime)->format('H:i') . ". Obrigado!";
     }
-    
-    
-    
 }
