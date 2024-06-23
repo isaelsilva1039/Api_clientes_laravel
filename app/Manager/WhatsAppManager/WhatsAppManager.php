@@ -255,7 +255,7 @@ class WhatsAppManager
             }
 
             $meta['month'] = $selectedMonth->toArray();
-            $meta['month_numeric'] = $selectedMonth->value; 
+            $meta['month_numeric'] = $selectedMonth->value + 1; 
             $conversation->meta = $meta;
             $conversation->status = 'choosing_day';
             $conversation->save();
