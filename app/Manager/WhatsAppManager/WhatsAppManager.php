@@ -239,7 +239,7 @@ class WhatsAppManager
         $months = Mes::where('user_id', $professionalId)->where('isActive', 1)->get();
 
 
-        $response = "Escolha um mês para o agendamento:\n";
+        $response = "Escolha um mês para o agendamento: \n" . $professionalId;
 
         foreach ($months as $month) {
             $response .= $month->id . ". " . $month->nome . "\n";
