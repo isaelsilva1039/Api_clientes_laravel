@@ -31,6 +31,7 @@ class Cliente extends Model
     'observations',
     'id_cliente_assas',
     'date_of_birth',
+    'user_id',
     'plano',
     'total',
     'updated_at',
