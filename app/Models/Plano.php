@@ -10,7 +10,7 @@ class Plano extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome_plano', 'descricao', 'fidelidade', 'periodo_fidelidade', 'valor', 'especialidades'
+        'nome_plano', 'descricao', 'fidelidade', 'periodo_fidelidade', 'valor', 'especialidades','id_woocomerce'
     ];
 
     protected $casts = [

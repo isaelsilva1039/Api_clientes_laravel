@@ -47,6 +47,7 @@ class ApiPlanoController extends Controller
             'fidelidade' => $request['fidelity'],
             'periodo_fidelidade' => $request['fidelityPeriod'] ?? null,
             'valor' => $request['valor'],
+            'id_woocomerce' => $request['id_woocomerce'],
             'especialidades' => $especialidadesFormatadas,
         ]);
 

@@ -17,6 +17,7 @@ class ApiPlanoManager
             'periodo_fidelidade' => $request['fidelityPeriod'] ?? null,
             'valor' => $request['valor'],
             'especialidades' => $request['specialties'],
+            'id_woocomerce' => $request['id_woocomerce']
         ]);
 
         return $plano;
